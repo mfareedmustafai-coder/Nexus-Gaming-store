@@ -5,464 +5,166 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexus Gaming Store</title>
     
-    <!-- Google Fonts for Pro Typography -->
+    <!-- Google Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        /* --- CSS VARIABLES & RESET --- */
+        /* --- VARIABLES & RESET --- */
         :root {
             --bg-dark: #0f1014;
             --bg-card: #1b1e26;
-            --primary: #00d4ff; /* Neon Blue */
-            --primary-hover: #00a3cc;
+            --primary: #00d4ff; 
             --text-main: #ffffff;
             --text-muted: #a1a1a6;
             --gradient: linear-gradient(45deg, #00d4ff, #0051ff);
-            --glass: rgba(27, 30, 38, 0.85);
         }
 
         * { box-sizing: border-box; outline: none; }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            overflow-x: hidden;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden;}
 
         /* --- NAVBAR --- */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(15, 16, 20, 0.8);
-            backdrop-filter: blur(12px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
+        nav { position: fixed; top: 0; width: 100%; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(15, 16, 20, 0.95); backdrop-filter: blur(12px); z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: 1px; }
+        .search-bar input { background: #252830; border: 1px solid #333; padding: 10px 20px; border-radius: 30px; color: white; width: 250px; transition: 0.3s; }
+        .search-bar input:focus { width: 300px; border-color: var(--primary); }
 
-        .logo {
-            font-size: 24px;
-            font-weight: 800;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .search-bar {
+        /* --- HERO (BACKGROUND RESTORED) --- */
+        header { 
+            height: 60vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+            margin-top: 60px; 
             position: relative;
-        }
-
-        .search-bar input {
-            background: #252830;
-            border: 1px solid #333;
-            padding: 10px 20px 10px 40px;
-            border-radius: 30px;
-            color: white;
-            font-family: inherit;
-            width: 250px;
-            transition: 0.3s;
-        }
-
-        .search-bar input:focus {
-            width: 300px;
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
-        }
-
-        .search-bar i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-        }
-
-        /* --- HERO SECTION --- */
-        header {
-            height: 60vh;
-            background: radial-gradient(circle at center, rgba(0, 81, 255, 0.15) 0%, rgba(15, 16, 20, 0) 70%), 
+            /* RESTORED THE IMAGE BACKGROUND HERE */
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(15,16,20,1)), 
                         url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
             background-size: cover;
             background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            margin-top: 60px;
-            position: relative;
         }
-
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100px;
-            background: linear-gradient(to top, var(--bg-dark), transparent);
+        
+        header h1 { font-size: 3.5rem; margin: 0; text-shadow: 0 5px 20px rgba(0,0,0,0.8); }
+        header p { font-size: 1.2rem; color: #ddd; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+        
+        /* --- GRID --- */
+        .container { max-width: 1300px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 2; margin-top: -50px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
+        
+        .card { background-color: var(--bg-card); border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 15px 30px rgba(0, 212, 255, 0.15); }
+        
+        /* Fixed Aspect Ratio for Logo on Card */
+        .card-img-wrapper { width: 100%; height: 200px; position: relative; background: #202020; overflow: hidden; }
+        .card img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
+        .card:hover img { transform: scale(1.1); }
+        
+        .card-content { padding: 15px; }
+        .card h3 { margin: 0; font-size: 18px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        /* Short Description / Shortcut Style */
+        .short-desc {
+            font-size: 12px; color: #888; margin-top: 5px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+            line-height: 1.4; height: 34px; /* Limits height */
         }
-
-        header h1 {
-            font-size: 3.5rem;
-            margin: 0;
-            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
-
-        header p {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            margin-top: 10px;
-            max-width: 600px;
-        }
-
-        /* --- GAME GRID --- */
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .section-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 30px;
-            border-left: 4px solid var(--primary);
-            padding-left: 15px;
-            display: flex;
-            align-items: center;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
-        }
-
-        /* --- PRO CARD DESIGN --- */
-        .card {
-            background-color: var(--bg-card);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            position: relative;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 212, 255, 0.2);
-            border-color: rgba(0, 212, 255, 0.3);
-        }
-
-        .card-img-wrapper {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-            overflow: hidden;
-        }
-
-        .card img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-
-        .card:hover img {
-            transform: scale(1.1);
-        }
-
-        .card-content {
-            padding: 15px;
-        }
-
-        .card h3 {
-            margin: 0;
-            font-size: 16px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: #fff;
-        }
-
-        .card p {
-            margin: 5px 0 0;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .tag {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: var(--primary);
-            color: #000;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
+        
+        .verified-badge { color: var(--primary); font-size: 11px; margin-top: 8px; display: inline-block; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* --- MODAL (POPUP) --- */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .modal-content {
-            background: #15171e;
-            width: 90%;
-            max-width: 900px;
-            max-height: 90vh;
-            border-radius: 16px;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 0 50px rgba(0, 212, 255, 0.1);
-            border: 1px solid rgba(255,255,255,0.1);
-            animation: slideUp 0.4s ease forwards;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .modal-header {
-            height: 250px;
-            position: relative;
-        }
-
-        .modal-cover {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.5);
-            border: none;
-            color: white;
-            font-size: 24px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 10;
-            transition: 0.2s;
-        }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-overlay.active { display: flex; }
+        
+        .modal-content { background: #15171e; width: 95%; max-width: 900px; max-height: 90vh; border-radius: 16px; overflow-y: auto; position: relative; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        
+        .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); color: white; border: none; font-size: 20px; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; z-index: 100; transition: 0.2s; }
         .close-btn:hover { background: var(--primary); color: black; }
 
-        .modal-body {
-            padding: 30px;
-            margin-top: -60px;
-            position: relative;
-        }
+        /* Modal Header Image (Screenshot Cover) */
+        .modal-header-img { width: 100%; height: 300px; object-fit: cover; mask-image: linear-gradient(to bottom, black 50%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%); }
+        
+        .modal-body { padding: 30px; margin-top: -80px; position: relative; }
+        
+        .game-head-row { display: flex; gap: 20px; align-items: flex-end; margin-bottom: 25px; }
+        .game-logo-large { width: 120px; height: 120px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); background: #000; object-fit: cover; border: 2px solid #333; }
+        
+        .game-desc { color: #ccc; line-height: 1.6; font-size: 14px; margin-bottom: 30px; white-space: pre-wrap; }
 
-        .game-header {
-            display: flex;
-            align-items: flex-end;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
+        /* --- GALLERY GRID --- */
+        .gallery-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 10px; }
+        
+        .ss-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .ss-grid img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; cursor: pointer; transition: 0.2s; background: #222; }
+        .ss-grid img:hover { transform: scale(1.05); border: 1px solid var(--primary); }
 
-        .game-logo-small {
-            width: 100px;
-            height: 100px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-            object-fit: cover;
-            background: #000;
-        }
+        /* Download Button */
+        .btn-download { background: var(--gradient); color: white; padding: 16px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 18px; display: block; text-align: center; box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3); transition: 0.3s; margin-top: 20px; }
+        .btn-download:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5); }
 
-        .game-title-area h2 {
-            margin: 0;
-            font-size: 2rem;
-            line-height: 1;
-        }
-
-        .game-desc {
-            font-size: 14px;
-            line-height: 1.7;
-            color: #d1d1d1;
-            margin-bottom: 30px;
-            max-width: 700px;
-        }
-
-        .ss-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .ss-grid img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 8px;
-            transition: 0.2s;
-            cursor: zoom-in;
-        }
-
-        .ss-grid img:hover { opacity: 0.8; }
-
-        .action-area {
-            text-align: right;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 20px;
-        }
-
-        .btn-download {
-            background: var(--gradient);
-            color: white;
-            padding: 15px 50px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 18px;
-            display: inline-block;
-            box-shadow: 0 4px 15px rgba(0, 81, 255, 0.4);
-            transition: 0.3s;
-        }
-
-        .btn-download:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 81, 255, 0.6);
-        }
-
-        /* Loading Spinner */
-        .loader {
-            border: 4px solid #333;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 50px auto;
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
+        @media(max-width: 700px) { 
+            .game-head-row { flex-direction: column; align-items: center; text-align: center; margin-top: -60px; } 
+            .modal-header-img { height: 200px; }
+            .ss-grid { grid-template-columns: repeat(2, 1fr); }
+            header { height: 50vh; }
             header h1 { font-size: 2.5rem; }
-            .ss-grid { grid-template-columns: 1fr; }
-            .modal-header { height: 150px; }
-            .game-logo-small { width: 70px; height: 70px; }
-            .game-title-area h2 { font-size: 1.5rem; }
-            .search-bar input { width: 150px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
     <nav>
-        <div class="logo"><i class="fas fa-gamepad"></i> NEXUS</div>
+        <div class="logo">NEXUS</div>
         <div class="search-bar">
-            <i class="fas fa-search"></i>
             <input type="text" id="searchInput" placeholder="Search games..." onkeyup="filterGames()">
         </div>
     </nav>
 
-    <!-- HERO SECTION -->
     <header>
-        <h1>NEXT LEVEL GAMING</h1>
-        <p>Discover, Download, and Play the best titles curated just for you.</p>
+        <div>
+            <h1>NEXT LEVEL GAMING</h1>
+            <p>Discover. Download. Play.</p>
+        </div>
     </header>
 
-    <!-- MAIN CONTENT -->
     <div class="container">
-        <div class="section-title">
-            <i class="fas fa-fire" style="color: #ff4757; margin-right: 10px;"></i> Trending Now
+        <div class="section-title" style="margin-bottom:20px; font-size:20px; font-weight:600; border-left:4px solid var(--primary); padding-left:10px;">
+            Trending Now
         </div>
-        
-        <div id="loading" class="loader"></div>
-        <div id="game-grid" class="grid">
-            <!-- Games will be injected here -->
+        <div id="loading" style="text-align:center; margin-top:50px;">
+            <i class="fas fa-spinner fa-spin" style="font-size:30px; color:var(--primary)"></i>
         </div>
+        <div id="game-grid" class="grid"></div>
     </div>
 
-    <!-- PRO MODAL -->
+    <!-- MODAL POPUP -->
     <div id="gameModal" class="modal-overlay">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
             
-            <!-- Dynamic Header Image (Uses Screenshot 1 as banner) -->
-            <div class="modal-header">
-                <img id="m-cover" class="modal-cover" src="" alt="">
-            </div>
-
+            <!-- Banner Image (Screenshot) -->
+            <img id="m-cover" class="modal-header-img" src="">
+            
             <div class="modal-body">
-                <div class="game-header">
-                    <img id="m-logo" class="game-logo-small" src="" alt="">
-                    <div class="game-title-area">
-                        <h2 id="m-title">Game Title</h2>
-                        <span style="color: var(--primary); font-size: 0.9rem;">Verified App <i class="fas fa-check-circle"></i></span>
+                <div class="game-head-row">
+                    <!-- Logo in Modal -->
+                    <img id="m-logo" class="game-logo-large" src="">
+                    <div>
+                        <h2 id="m-title" style="margin:0; font-size:2rem; line-height:1.2;">Game Title</h2>
+                        <div class="verified-badge" style="font-size:14px; margin-top:5px;"><i class="fas fa-check-circle"></i> Official App</div>
                     </div>
                 </div>
 
-                <div id="m-desc" class="game-desc">
-                    Description goes here...
-                </div>
+                <div id="m-desc" class="game-desc">Description loading...</div>
 
-                <h4 style="margin-bottom: 15px;">Gallery</h4>
-                <div class="ss-grid">
-                    <img id="m-sc1" src="">
-                    <img id="m-sc2" src="">
-                    <img id="m-sc3" src="">
-                    <img id="m-sc4" src="">
-                </div>
+                <div class="gallery-title">Gallery</div>
+                
+                <!-- Screenshots Gallery -->
+                <div id="m-screenshots" class="ss-grid"></div>
 
-                <div class="action-area">
-                    <a id="m-download" href="#" target="_blank" class="btn-download">
-                        <i class="fas fa-download"></i> INSTALL NOW
-                    </a>
-                </div>
+                <a id="m-download" href="#" target="_blank" class="btn-download">
+                    <i class="fas fa-download"></i> INSTALL NOW
+                </a>
             </div>
         </div>
     </div>
@@ -485,91 +187,118 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         
-        let allGames = []; // Store games locally for search filtering
-
-        const gamesRef = ref(db, 'games');
+        let allGames = [];
         const grid = document.getElementById('game-grid');
         const loading = document.getElementById('loading');
 
-        onValue(gamesRef, (snapshot) => {
-            grid.innerHTML = "";
+        // Fetch Games
+        onValue(ref(db, 'games'), (snapshot) => {
             loading.style.display = "none";
+            grid.innerHTML = "";
             const data = snapshot.val();
             
             if (data) {
-                // Convert to array and reverse
                 allGames = Object.values(data).reverse();
                 renderGames(allGames);
             } else {
-                grid.innerHTML = "<p style='text-align:center; width:100%; color: #666;'>No games available yet.</p>";
+                grid.innerHTML = "<p style='text-align:center; width:100%; color:#888;'>No games published yet.</p>";
             }
         });
 
-        // Function to render cards
-        window.renderGames = (gamesList) => {
+        // Render Cards
+        window.renderGames = (games) => {
             grid.innerHTML = "";
-            gamesList.forEach(game => {
+            games.forEach(game => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.onclick = () => openModal(game);
                 
-                // Use Logo as main image if SC1 is missing, purely for fallback
-                const mainImage = game.sc1 || game.logo;
+                // --- FIX 1: ALWAYS USE LOGO FOR CARD ---
+                // We default to game.logo. If empty, use a placeholder.
+                const displayImg = game.logo || "https://via.placeholder.com/300?text=Icon";
+                
+                // Truncate description for the card
+                const shortDesc = game.desc ? game.desc.substring(0, 60) + "..." : "Action & Adventure";
 
                 card.innerHTML = `
-                    <div class="tag">NEW</div>
                     <div class="card-img-wrapper">
-                        <img src="${game.logo}" alt="${game.name}" onerror="this.src='https://via.placeholder.com/300'">
+                        <img src="${displayImg}" onerror="this.src='https://via.placeholder.com/300?text=No+Icon'">
                     </div>
                     <div class="card-content">
                         <h3>${game.name}</h3>
-                        <p>Action &bull; Free</p>
+                        <div class="short-desc">${shortDesc}</div>
+                        <div class="verified-badge">FREE</div>
                     </div>
                 `;
                 grid.appendChild(card);
             });
-        }
+        };
 
-        // Search Filter
+        // Search
         window.filterGames = () => {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const filtered = allGames.filter(g => g.name.toLowerCase().includes(query));
             renderGames(filtered);
         };
 
-        // Modal Logic
+        // Open Detail Modal
         window.openModal = (game) => {
-            const modal = document.getElementById('gameModal');
-            
-            // Set Content
             document.getElementById('m-title').innerText = game.name;
             document.getElementById('m-desc').innerText = game.desc;
             document.getElementById('m-logo').src = game.logo;
-            
-            // Use Screenshot 1 as the big banner cover. If empty, use Logo.
-            document.getElementById('m-cover').src = game.sc1 || game.logo;
-            
-            document.getElementById('m-sc1').src = game.sc1 || "https://via.placeholder.com/400x200?text=No+Image";
-            document.getElementById('m-sc2').src = game.sc2 || "https://via.placeholder.com/400x200?text=No+Image";
-            document.getElementById('m-sc3').src = game.sc3 || "https://via.placeholder.com/400x200?text=No+Image";
-            document.getElementById('m-sc4').src = game.sc4 || "https://via.placeholder.com/400x200?text=No+Image";
-            
             document.getElementById('m-download').href = game.download;
 
-            // Show with animation
+            // --- GALLERY LOGIC ---
+            const galleryContainer = document.getElementById('m-screenshots');
+            galleryContainer.innerHTML = ""; 
+
+            const addImageToGallery = (src) => {
+                if(!src || src.trim() === "") return;
+                const img = document.createElement('img');
+                img.src = src;
+                img.setAttribute('onerror', "this.style.display='none'"); 
+                galleryContainer.appendChild(img);
+            };
+
+            // 1. Load Screenshots (Unlimited Array)
+            let hasImages = false;
+            if (game.screenshots && Array.isArray(game.screenshots)) {
+                game.screenshots.forEach(url => {
+                    addImageToGallery(url);
+                    hasImages = true;
+                });
+            } 
+            
+            // 2. Load Old Format (Compatibility)
+            if (!hasImages) {
+                if(game.sc1) addImageToGallery(game.sc1);
+                if(game.sc2) addImageToGallery(game.sc2);
+                if(game.sc3) addImageToGallery(game.sc3);
+                if(game.sc4) addImageToGallery(game.sc4);
+            }
+
+            // --- HEADER COVER LOGIC ---
+            // The large image at the top of the popup should be a SCREENSHOT (Cover).
+            // If no screenshots exist, fall back to Logo.
+            const firstGalleryImg = galleryContainer.querySelector('img');
+            if (firstGalleryImg) {
+                document.getElementById('m-cover').src = firstGalleryImg.src;
+            } else {
+                document.getElementById('m-cover').src = game.logo;
+            }
+
+            const modal = document.getElementById('gameModal');
             modal.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Stop background scrolling
+            document.body.style.overflow = 'hidden';
         };
 
         window.closeModal = () => {
             document.getElementById('gameModal').classList.remove('active');
-            document.body.style.overflow = 'auto'; // Restore scrolling
+            document.body.style.overflow = 'auto';
         };
 
-        // Close when clicking outside modal
         window.onclick = (e) => {
-            const modal = document.getElementById('gameModal');
-            if (e.target === modal) closeModal();
+            if (e.target == document.getElementById('gameModal')) closeModal();
         }
     </script>
 </body>
