@@ -7,7 +7,7 @@
     
     <!-- Google Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         /* --- VARIABLES & RESET --- */
@@ -15,162 +15,259 @@
             --bg-dark: #0f1014;
             --bg-card: #1b1e26;
             --primary: #00d4ff; 
+            --accent: #7000ff;
             --text-main: #ffffff;
             --text-muted: #a1a1a6;
             --gradient: linear-gradient(45deg, #00d4ff, #0051ff);
+            --danger: #ff4757;
         }
 
         * { box-sizing: border-box; outline: none; }
         body { margin: 0; font-family: 'Poppins', sans-serif; background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden;}
+        a { text-decoration: none; color: inherit; }
 
         /* --- NAVBAR --- */
-        nav { position: fixed; top: 0; width: 100%; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(15, 16, 20, 0.95); backdrop-filter: blur(12px); z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .logo { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: 1px; }
-        .search-bar input { background: #252830; border: 1px solid #333; padding: 10px 20px; border-radius: 30px; color: white; width: 250px; transition: 0.3s; }
-        .search-bar input:focus { width: 300px; border-color: var(--primary); }
-
-        /* --- HERO --- */
-        header { 
-            height: 60vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            text-align: center; 
-            margin-top: 60px; 
-            position: relative;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(15,16,20,1)), 
-                        url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-position: center;
+        nav { 
+            position: fixed; top: 0; width: 100%; padding: 15px 30px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(15, 16, 20, 0.95); backdrop-filter: blur(12px); 
+            z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05); 
         }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: 1px; display:flex; align-items:center; gap:10px;}
         
-        header h1 { font-size: 3.5rem; margin: 0; text-shadow: 0 5px 20px rgba(0,0,0,0.8); }
-        header p { font-size: 1.2rem; color: #ddd; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+
+        .search-bar { position: relative; }
+        .search-bar input { background: #252830; border: 1px solid #333; padding: 10px 20px 10px 40px; border-radius: 30px; color: white; width: 250px; transition: 0.3s; }
+        .search-bar input:focus { width: 300px; border-color: var(--primary); }
+        .search-bar i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
+
+        /* AUTH BUTTONS */
+        .btn-login { border: 1px solid var(--primary); color: var(--primary); padding: 8px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: 0.3s; background: transparent; }
+        .btn-login:hover { background: var(--primary); color: black; }
         
-        /* --- GRID --- */
-        .container { max-width: 1300px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 2; margin-top: -50px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
+        .user-profile-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; display: none; }
+
+        /* --- LAYOUT: SIDEBAR + MAIN --- */
+        .app-layout { display: flex; margin-top: 70px; min-height: 100vh; }
         
-        .card { background-color: var(--bg-card); border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 15px 30px rgba(0, 212, 255, 0.15); }
+        .sidebar { 
+            width: 250px; position: fixed; left: 0; top: 70px; bottom: 0; 
+            background: var(--bg-dark); padding: 20px; border-right: 1px solid #222;
+            display: flex; flex-direction: column; gap: 10px; z-index: 900;
+        }
+        .menu-item { padding: 12px 15px; border-radius: 10px; color: #aaa; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 15px; }
+        .menu-item:hover, .menu-item.active { background: #1f222a; color: white; }
+        .menu-item i { width: 20px; text-align: center; }
+
+        .main-content { margin-left: 250px; flex: 1; padding: 20px; }
+
+        /* --- HERO HEADER --- */
+        .hero-banner {
+            border-radius: 20px; height: 300px; display: flex; align-items: center; padding: 40px;
+            background: linear-gradient(to right, rgba(0,0,0,0.9), transparent), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover; background-position: center; margin-bottom: 30px;
+        }
+        .hero-text h1 { font-size: 3rem; margin: 0; text-shadow: 0 5px 20px rgba(0,0,0,0.8); line-height: 1.1; }
         
-        .card-img-wrapper { width: 100%; height: 200px; position: relative; background: #202020; overflow: hidden; }
+        /* --- GAME GRID --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        
+        .card { background-color: var(--bg-card); border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; position: relative; }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        .card-img-wrapper { width: 100%; height: 160px; position: relative; background: #202020; overflow: hidden; }
         .card img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
         .card:hover img { transform: scale(1.1); }
         
-        .card-content { padding: 15px; }
-        .card h3 { margin: 0; font-size: 18px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .short-desc { font-size: 12px; color: #888; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; height: 34px; }
-        
-        .card-stats { display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; color: #aaa; }
-        .verified-badge { color: var(--primary); font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        /* Wishlist Heart */
+        .wishlist-btn { 
+            position: absolute; top: 10px; right: 10px; 
+            background: rgba(0,0,0,0.6); color: white; border: none; 
+            width: 30px; height: 30px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; z-index: 5; transition: 0.2s;
+        }
+        .wishlist-btn:hover { background: white; color: var(--danger); }
+        .wishlist-btn.active { background: white; color: var(--danger); }
 
-        /* --- MODAL --- */
+        .card-content { padding: 15px; }
+        .card h3 { margin: 0; font-size: 16px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-rating { font-size: 12px; color: #fbbb00; margin: 5px 0; }
+        .card-stats { display: flex; justify-content: space-between; font-size: 11px; color: #888; margin-top: 5px; }
+        
+        /* --- AUTH MODAL --- */
+        .auth-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .auth-box { background: #1b1e26; padding: 30px; border-radius: 12px; width: 350px; text-align: center; border: 1px solid #333; position: relative; }
+        .auth-box h2 { margin-top: 0; color: var(--primary); }
+        .auth-input { width: 100%; padding: 12px; margin: 10px 0; background: #0f1014; border: 1px solid #333; color: white; border-radius: 6px; }
+        .auth-btn { width: 100%; padding: 12px; background: var(--gradient); border: none; color: white; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+        .toggle-auth { margin-top: 15px; font-size: 12px; color: #888; cursor: pointer; }
+        .toggle-auth span { color: var(--primary); }
+
+        /* --- APP DETAIL MODAL --- */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .modal-overlay.active { display: flex; }
+        .modal-content { background: #15171e; width: 95%; max-width: 900px; max-height: 90vh; border-radius: 16px; overflow-y: auto; position: relative; border: 1px solid rgba(255,255,255,0.1); }
+        .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); color: white; border: none; font-size: 20px; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; z-index: 100; }
         
-        .modal-content { background: #15171e; width: 95%; max-width: 900px; max-height: 90vh; border-radius: 16px; overflow-y: auto; position: relative; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 50px rgba(0,0,0,0.8); }
-        
-        .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); color: white; border: none; font-size: 20px; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; z-index: 100; transition: 0.2s; }
-        .close-btn:hover { background: var(--primary); color: black; }
-
-        .modal-header-img { 
-            width: 100%; 
-            height: 350px; 
-            object-fit: contain; /* Fix for Portrait screenshots */
-            background: #000; 
-        }
-        
+        .modal-header-img { width: 100%; height: 350px; object-fit: contain; background: #000; }
         .modal-body { padding: 30px; margin-top: -80px; position: relative; }
-        
         .game-head-row { display: flex; gap: 20px; align-items: flex-end; margin-bottom: 25px; }
         .game-logo-large { width: 120px; height: 120px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); background: #000; object-fit: cover; border: 2px solid #333; }
         
-        /* Stats Bar inside Modal */
-        .stats-bar { 
-            display: flex; gap: 20px; margin-bottom: 25px; 
-            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
+        .stats-bar { display: flex; gap: 20px; margin-bottom: 25px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; }
         .stat-item { display: flex; flex-direction: column; }
         .stat-label { font-size: 11px; color: #888; text-transform: uppercase; }
         .stat-value { font-size: 14px; color: white; font-weight: 600; }
 
-        .game-desc { color: #ccc; line-height: 1.6; font-size: 14px; margin-bottom: 30px; white-space: pre-wrap; }
+        .ss-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .ss-grid img { width: 100%; height: auto; max-height: 300px; object-fit: contain; border-radius: 8px; cursor: pointer; background: #000; border: 1px solid #333; }
 
-        /* Gallery Grid (Unlimited) */
-        .gallery-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 10px; }
+        .btn-download { background: var(--gradient); color: white; padding: 16px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 18px; display: block; text-align: center; margin-top: 20px; }
         
-        .ss-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
-            gap: 15px; 
-            margin-bottom: 30px; 
-        }
-
-        .ss-grid img { 
-            width: 100%; 
-            height: auto; 
-            max-height: 300px;
-            object-fit: contain; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            background: #000;
-            border: 1px solid #333;
-        }
-        .ss-grid img:hover { transform: scale(1.02); border-color: var(--primary); }
-
-        .btn-download { background: var(--gradient); color: white; padding: 16px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 18px; display: block; text-align: center; box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3); transition: 0.3s; margin-top: 20px; }
-        .btn-download:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5); }
-
         /* Reviews */
         .reviews-section { margin-top: 40px; border-top: 1px solid #333; padding-top: 20px; }
-        .review-form { margin-bottom: 20px; background: #1e2129; padding: 15px; border-radius: 8px; }
-        .review-form input, .review-form textarea { width: 100%; background: #111; border: 1px solid #333; color: white; padding: 10px; margin-bottom: 10px; border-radius: 4px; font-family: inherit; }
-        .btn-submit { background: #333; color: white; border: none; padding: 8px 20px; cursor: pointer; border-radius: 4px; font-weight: bold; }
-        .btn-submit:hover { background: var(--primary); color: black; }
-
-        .review-list { max-height: 300px; overflow-y: auto; }
+        .review-form textarea { width: 100%; background: #111; border: 1px solid #333; color: white; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
         .review-item { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .review-user { font-weight: bold; color: var(--primary); font-size: 14px; }
-        .review-text { color: #ddd; font-size: 13px; margin-top: 5px; }
-        .review-date { font-size: 10px; color: #666; margin-top: 5px; }
+        
+        /* Toast */
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 4px; padding: 16px; position: fixed; z-index: 3000; right: 30px; bottom: 30px; border-left: 5px solid var(--primary); transform: translateY(100px); transition: transform 0.3s; }
+        #toast.show { visibility: visible; transform: translateY(0); }
 
-        @media(max-width: 700px) { 
-            .game-head-row { flex-direction: column; align-items: center; text-align: center; margin-top: -60px; } 
-            .modal-header-img { height: 250px; }
-            .ss-grid { grid-template-columns: repeat(2, 1fr); }
-            header { height: 50vh; }
-            header h1 { font-size: 2.5rem; }
+        @media(max-width: 768px) {
+            .sidebar { display: none; } /* Hide Sidebar on mobile for now (can add toggle later) */
+            .main-content { margin-left: 0; }
+            .nav-right { gap: 10px; }
+            .search-bar input { width: 150px; }
+            .hero-banner { height: 200px; }
+            .hero-text h1 { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
 
+    <div id="toast">Notification</div>
+
+    <!-- NAVBAR -->
     <nav>
-        <div class="logo">NEXUS</div>
-        <div class="search-bar"><input type="text" id="searchInput" placeholder="Search games..." onkeyup="filterGames()"></div>
+        <div class="logo"><i class="fas fa-gamepad"></i> NEXUS</div>
+        
+        <div class="nav-right">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search..." onkeyup="filterGames()">
+            </div>
+            
+            <!-- Auth Buttons -->
+            <button id="nav-login-btn" class="btn-login" onclick="showAuthModal('login')">Sign In</button>
+            <div id="nav-profile-btn" class="user-profile-icon" onclick="toggleSidebarView('profile')">U</div>
+        </div>
     </nav>
 
-    <header>
-        <div>
-            <h1>NEXT LEVEL GAMING</h1>
-            <p>Discover. Download. Play.</p>
+    <!-- LAYOUT -->
+    <div class="app-layout">
+        
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="menu-item active" onclick="setView('home', this)">
+                <i class="fas fa-home"></i> Home
+            </div>
+            <div class="menu-item" onclick="setView('wishlist', this)">
+                <i class="fas fa-heart"></i> My Wishlist
+            </div>
+            <div class="menu-item" onclick="setView('history', this)">
+                <i class="fas fa-history"></i> History
+            </div>
+            <div class="menu-item" onclick="setView('profile', this)">
+                <i class="fas fa-user"></i> My Profile
+            </div>
+            <div style="flex:1"></div>
+            <div id="sidebar-logout" class="menu-item" style="color:var(--danger); display:none;" onclick="logoutUser()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </div>
         </div>
-    </header>
 
-    <div class="container">
-        <div class="section-title" style="margin-bottom:20px; font-size:20px; font-weight:600; border-left:4px solid var(--primary); padding-left:10px;">
-            Trending Now
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            
+            <!-- HOME VIEW -->
+            <div id="view-home">
+                <div class="hero-banner">
+                    <div class="hero-text">
+                        <h1>NEXT LEVEL<br>GAMING</h1>
+                        <p>Explore unlimited apps & games.</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:20px; font-size:20px; font-weight:600; display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-fire" style="color:var(--danger)"></i> Trending Now
+                </div>
+                
+                <div id="loading" style="text-align:center; margin-top:50px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size:30px; color:var(--primary)"></i>
+                </div>
+                <div id="game-grid" class="grid"></div>
+            </div>
+
+            <!-- WISHLIST VIEW -->
+            <div id="view-wishlist" style="display:none;">
+                <h2><i class="fas fa-heart" style="color:var(--danger)"></i> My Wishlist</h2>
+                <div id="wishlist-grid" class="grid"></div>
+                <div id="wishlist-empty" style="text-align:center; margin-top:50px; color:#666; display:none;">
+                    No games in wishlist yet.
+                </div>
+            </div>
+
+            <!-- HISTORY VIEW -->
+            <div id="view-history" style="display:none;">
+                <h2><i class="fas fa-download" style="color:var(--primary)"></i> Download History</h2>
+                <div id="history-grid" class="grid"></div>
+            </div>
+
+            <!-- PROFILE VIEW -->
+            <div id="view-profile" style="display:none; text-align:center; padding-top:50px;">
+                <div style="width:100px; height:100px; border-radius:50%; background:var(--gradient); margin:0 auto; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:bold;" id="profile-pic-large">U</div>
+                <h2 id="profile-name-large">User Name</h2>
+                <p id="profile-email-large" style="color:#888;">user@email.com</p>
+                <p style="margin-top:20px; color:var(--primary);">Member since 2024</p>
+            </div>
+
         </div>
-        <div id="loading" style="text-align:center; margin-top:50px;">
-            <i class="fas fa-spinner fa-spin" style="font-size:30px; color:var(--primary)"></i>
-        </div>
-        <div id="game-grid" class="grid"></div>
     </div>
 
-    <!-- MODAL POPUP -->
+    <!-- AUTH MODAL -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-box">
+            <button class="close-btn" onclick="closeAuthModal()" style="top:10px; right:10px;">&times;</button>
+            
+            <!-- LOGIN FORM -->
+            <div id="login-form">
+                <h2>Welcome Back</h2>
+                <input type="email" id="login-email" class="auth-input" placeholder="Email">
+                <input type="password" id="login-pass" class="auth-input" placeholder="Password">
+                <button class="auth-btn" onclick="loginUser()">Sign In</button>
+                <div class="toggle-auth" onclick="toggleAuthForm('signup')">
+                    Don't have an account? <span>Sign Up</span>
+                </div>
+            </div>
+
+            <!-- SIGNUP FORM -->
+            <div id="signup-form" style="display:none;">
+                <h2>Create Account</h2>
+                <input type="text" id="signup-name" class="auth-input" placeholder="Full Name">
+                <input type="email" id="signup-email" class="auth-input" placeholder="Email">
+                <input type="password" id="signup-pass" class="auth-input" placeholder="Password">
+                <button class="auth-btn" onclick="signupUser()">Sign Up</button>
+                <div class="toggle-auth" onclick="toggleAuthForm('login')">
+                    Already have an account? <span>Sign In</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME DETAIL MODAL -->
     <div id="gameModal" class="modal-overlay">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal()">&times;</button>
@@ -180,42 +277,30 @@
                 <div class="game-head-row">
                     <img id="m-logo" class="game-logo-large" src="">
                     <div style="width:100%">
-                        <h2 id="m-title" style="margin:0; font-size:2rem; line-height:1.2;">Game Title</h2>
-                        <div class="verified-badge"><i class="fas fa-check-circle"></i> Official App</div>
+                        <h2 id="m-title" style="margin:0; font-size:2rem;">Title</h2>
+                        <div class="verified-badge"><i class="fas fa-check-circle"></i> Official</div>
                     </div>
                 </div>
 
-                <!-- DYNAMIC STATS (Downloads & Date) -->
                 <div class="stats-bar">
-                    <div class="stat-item">
-                        <span class="stat-label">Downloads</span>
-                        <span class="stat-value" id="m-downloads">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Last Updated</span>
-                        <span class="stat-value" id="m-updated">Jan 01</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Reviews</span>
-                        <span class="stat-value" id="m-review-count">0</span>
-                    </div>
+                    <div class="stat-item"><span class="stat-label">Downloads</span><span class="stat-value" id="m-downloads">0</span></div>
+                    <div class="stat-item"><span class="stat-label">Updated</span><span class="stat-value" id="m-updated">Jan 01</span></div>
                 </div>
 
                 <div id="m-desc" class="game-desc"></div>
                 <div class="gallery-title">Gallery</div>
                 <div id="m-screenshots" class="ss-grid"></div>
 
-                <a id="m-download" href="#" target="_blank" class="btn-download" onclick="trackDownload()">
-                    <i class="fas fa-download"></i> INSTALL NOW
-                </a>
+                <a id="m-download" href="#" target="_blank" class="btn-download" onclick="handleDownload()">INSTALL NOW</a>
 
-                <!-- REVIEWS -->
                 <div class="reviews-section">
-                    <div class="gallery-title">User Reviews</div>
-                    <div class="review-form">
-                        <input type="text" id="reviewName" placeholder="Your Name">
+                    <div class="gallery-title">Reviews</div>
+                    <div class="review-form" id="review-form-container">
                         <textarea id="reviewText" rows="2" placeholder="Write a review..."></textarea>
                         <button class="btn-submit" onclick="submitReview()">Post Review</button>
+                    </div>
+                    <div id="review-login-msg" style="display:none; color:#888; margin-bottom:15px;">
+                        <span style="color:var(--primary); cursor:pointer;" onclick="showAuthModal('login')">Login</span> to write a review.
                     </div>
                     <div id="reviews-list" class="review-list"></div>
                 </div>
@@ -226,7 +311,8 @@
     <!-- FIREBASE LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getDatabase, ref, onValue, push, runTransaction } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import { getDatabase, ref, onValue, push, runTransaction, update, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCn1FBaxDwbvC28VWXAcq557uCidl-JHy0",
@@ -239,163 +325,314 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getDatabase(app);
         
+        // State
         let allGames = [];
-        let currentGameId = null; 
-        const grid = document.getElementById('game-grid');
-        const loading = document.getElementById('loading');
+        let currentUser = null;
+        let userWishlist = {}; // { gameId: true }
+        let userDownloads = {}; // { gameId: true }
+        let currentGameId = null;
 
+        // --- AUTH LOGIC ---
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if(user) {
+                // UI Updates
+                document.getElementById('nav-login-btn').style.display = 'none';
+                document.getElementById('nav-profile-btn').style.display = 'flex';
+                document.getElementById('nav-profile-btn').innerText = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
+                document.getElementById('sidebar-logout').style.display = 'flex';
+                
+                // Profile Page Data
+                document.getElementById('profile-name-large').innerText = user.displayName || "User";
+                document.getElementById('profile-email-large').innerText = user.email;
+                document.getElementById('profile-pic-large').innerText = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
+
+                // Fetch User Data (Wishlist/History)
+                fetchUserData(user.uid);
+            } else {
+                // UI Reset
+                document.getElementById('nav-login-btn').style.display = 'block';
+                document.getElementById('nav-profile-btn').style.display = 'none';
+                document.getElementById('sidebar-logout').style.display = 'none';
+                userWishlist = {};
+                userDownloads = {};
+                renderGames(allGames); // Re-render to remove hearts if needed
+            }
+            updateReviewUI();
+        });
+
+        async function fetchUserData(uid) {
+            // Get Wishlist
+            onValue(ref(db, `users/${uid}/wishlist`), (snap) => {
+                userWishlist = snap.val() || {};
+                renderGames(allGames); // Re-render to show active hearts
+                renderWishlist();
+            });
+            // Get History
+            onValue(ref(db, `users/${uid}/history`), (snap) => {
+                userDownloads = snap.val() || {};
+                renderHistory();
+            });
+        }
+
+        window.loginUser = () => {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            signInWithEmailAndPassword(auth, email, pass)
+                .then(() => { closeAuthModal(); showToast("Welcome back!", "success"); })
+                .catch(e => alert(e.message));
+        };
+
+        window.signupUser = () => {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const pass = document.getElementById('signup-pass').value;
+            if(!name) return alert("Name required");
+
+            createUserWithEmailAndPassword(auth, email, pass).then((cred) => {
+                updateProfile(cred.user, { displayName: name }).then(() => {
+                    closeAuthModal(); showToast("Account created!", "success");
+                    // Create DB entry
+                    update(ref(db, `users/${cred.user.uid}`), { name: name, email: email });
+                });
+            }).catch(e => alert(e.message));
+        };
+
+        window.logoutUser = () => {
+            signOut(auth).then(() => { showToast("Logged out", "success"); setView('home'); });
+        };
+
+        // --- MAIN APP LOGIC ---
+        
         // Fetch Games
         onValue(ref(db, 'games'), (snapshot) => {
-            loading.style.display = "none";
+            document.getElementById('loading').style.display = "none";
             const data = snapshot.val();
             if (data) {
-                // Map Data to Array
                 allGames = Object.entries(data).map(([key, val]) => ({...val, id: key})).reverse();
                 renderGames(allGames);
-                
-                // Real-time update for open modal
-                if(currentGameId) {
-                    const updatedGame = allGames.find(g => g.id === currentGameId);
-                    if(updatedGame) updateModalData(updatedGame);
-                }
-            } else {
-                grid.innerHTML = "<p style='text-align:center; width:100%; color:#888;'>No games published yet.</p>";
+                renderWishlist();
+                renderHistory();
             }
         });
 
+        // Render Home Grid
         window.renderGames = (games) => {
+            const grid = document.getElementById('game-grid');
             grid.innerHTML = "";
-            games.forEach(game => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.onclick = () => openModal(game);
-                
-                const displayImg = game.logo || "https://via.placeholder.com/300?text=Icon";
-                const shortDesc = game.desc ? game.desc.substring(0, 60) + "..." : "Action & Adventure";
-                const downloadCount = game.downloadCount || 0;
-
-                card.innerHTML = `
-                    <div class="card-img-wrapper">
-                        <img src="${displayImg}" onerror="this.src='https://via.placeholder.com/300?text=No+Icon'">
-                    </div>
-                    <div class="card-content">
-                        <h3>${game.name}</h3>
-                        <div class="short-desc">${shortDesc}</div>
-                        <div class="card-stats">
-                            <span><i class="fas fa-download"></i> ${downloadCount}</span>
-                            <span class="verified-badge">FREE</span>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
+            games.forEach(game => grid.appendChild(createCard(game)));
         };
 
-        window.filterGames = () => {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allGames.filter(g => g.name.toLowerCase().includes(query));
-            renderGames(filtered);
-        };
-
-        // --- MODAL FUNCTIONS ---
-        window.openModal = (game) => {
-            currentGameId = game.id; 
+        // Render Wishlist Grid
+        function renderWishlist() {
+            const grid = document.getElementById('wishlist-grid');
+            grid.innerHTML = "";
+            const wishedGames = allGames.filter(g => userWishlist[g.id]);
             
+            if(wishedGames.length === 0) {
+                document.getElementById('wishlist-empty').style.display = 'block';
+            } else {
+                document.getElementById('wishlist-empty').style.display = 'none';
+                wishedGames.forEach(game => grid.appendChild(createCard(game)));
+            }
+        }
+
+        // Render History Grid
+        function renderHistory() {
+            const grid = document.getElementById('history-grid');
+            grid.innerHTML = "";
+            const historyGames = allGames.filter(g => userDownloads[g.id]);
+            
+            if(historyGames.length === 0) {
+                grid.innerHTML = "<div style='color:#666; text-align:center; width:100%;'>No downloads yet.</div>";
+            } else {
+                historyGames.forEach(game => grid.appendChild(createCard(game)));
+            }
+        }
+
+        // Helper: Create a Card HTML Element
+        function createCard(game) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            const displayImg = game.logo || "https://via.placeholder.com/300";
+            const isLiked = userWishlist[game.id] ? 'active' : '';
+
+            card.innerHTML = `
+                <button class="wishlist-btn ${isLiked}" onclick="event.stopPropagation(); toggleWishlist('${game.id}')">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <div class="card-img-wrapper">
+                    <img src="${displayImg}" onerror="this.src='https://via.placeholder.com/300'">
+                </div>
+                <div class="card-content">
+                    <h3>${game.name}</h3>
+                    <div class="card-rating">
+                        <i class="fas fa-star"></i> <i class="fas fa-star"></i> <i class="fas fa-star"></i> <i class="fas fa-star"></i> <i class="fas fa-star"></i>
+                    </div>
+                    <div class="card-stats">
+                        <span>${game.downloadCount || 0} Downloads</span>
+                        <span class="verified-badge">FREE</span>
+                    </div>
+                </div>
+            `;
+            card.onclick = () => openModal(game);
+            return card;
+        }
+
+        // --- ACTIONS ---
+
+        window.toggleWishlist = (gameId) => {
+            if(!currentUser) return showAuthModal('login');
+            
+            const isLiked = userWishlist[gameId];
+            const updates = {};
+            if(isLiked) {
+                updates[`users/${currentUser.uid}/wishlist/${gameId}`] = null; // Remove
+                showToast("Removed from wishlist", "success");
+            } else {
+                updates[`users/${currentUser.uid}/wishlist/${gameId}`] = true; // Add
+                showToast("Added to wishlist", "success");
+            }
+            update(ref(db), updates);
+        };
+
+        window.handleDownload = () => {
+            if(!currentGameId) return;
+            
+            // 1. Global Count
+            const countRef = ref(db, `games/${currentGameId}/downloadCount`);
+            runTransaction(countRef, (count) => (count || 0) + 1);
+
+            // 2. Personal History (if logged in)
+            if(currentUser) {
+                update(ref(db, `users/${currentUser.uid}/history`), { [currentGameId]: true });
+            }
+        };
+
+        // --- VIEW NAVIGATION ---
+        window.setView = (viewId, btn) => {
+            // Hide all views
+            ['home', 'wishlist', 'history', 'profile'].forEach(v => {
+                document.getElementById('view-'+v).style.display = 'none';
+            });
+            // Show selected
+            document.getElementById('view-'+viewId).style.display = 'block';
+            
+            // Update Sidebar Active State
+            if(btn) {
+                document.querySelectorAll('.sidebar .menu-item').forEach(el => el.classList.remove('active'));
+                btn.classList.add('active');
+            }
+            
+            // Mobile: Close sidebar if needed (implementation left simple for now)
+        };
+
+        // --- MODAL & REVIEWS ---
+        
+        window.openModal = (game) => {
+            currentGameId = game.id;
+            // Set content... (Title, Desc, Logo)
             document.getElementById('m-title').innerText = game.name;
             document.getElementById('m-desc').innerText = game.desc;
             document.getElementById('m-logo').src = game.logo;
             document.getElementById('m-download').href = game.download;
-            
-            updateModalData(game);
+            document.getElementById('m-downloads').innerText = game.downloadCount || 0;
+            document.getElementById('m-updated').innerText = new Date(game.timestamp || Date.now()).toLocaleDateString();
 
-            // Populate Gallery (Unlimited Loop)
-            const galleryContainer = document.getElementById('m-screenshots');
-            galleryContainer.innerHTML = ""; 
-            const addImg = (src) => {
-                if(!src) return;
-                const img = document.createElement('img'); img.src = src;
-                img.setAttribute('onerror', "this.style.display='none'"); 
-                galleryContainer.appendChild(img);
+            // Gallery
+            const gal = document.getElementById('m-screenshots'); gal.innerHTML = "";
+            const addImg = (s) => { 
+                if(!s)return; 
+                let i=document.createElement('img'); i.src=s; 
+                i.onerror=function(){this.style.display='none'}; 
+                gal.appendChild(i); 
             };
+            if(game.screenshots && Array.isArray(game.screenshots)) game.screenshots.forEach(addImg);
+            else { if(game.sc1) addImg(game.sc1); if(game.sc2) addImg(game.sc2); if(game.sc3) addImg(game.sc3); if(game.sc4) addImg(game.sc4); }
+            
+            // Banner
+            const f = gal.querySelector('img');
+            document.getElementById('m-cover').src = f ? f.src : game.logo;
 
-            // Handle New Array Format OR Old Format
-            if (game.screenshots && Array.isArray(game.screenshots)) {
-                game.screenshots.forEach(url => addImg(url));
-            } else {
-                if(game.sc1) addImg(game.sc1);
-                if(game.sc2) addImg(game.sc2);
-                if(game.sc3) addImg(game.sc3);
-                if(game.sc4) addImg(game.sc4);
-            }
-
-            // Set Banner from Gallery
-            const firstImg = galleryContainer.querySelector('img');
-            document.getElementById('m-cover').src = firstImg ? firstImg.src : game.logo;
+            // Reviews
+            updateReviewsList(game.reviews);
 
             document.getElementById('gameModal').classList.add('active');
             document.body.style.overflow = 'hidden';
         };
 
-        function updateModalData(game) {
-            // Stats
-            document.getElementById('m-downloads').innerText = (game.downloadCount || 0);
-            
-            const date = new Date(game.timestamp || Date.now());
-            document.getElementById('m-updated').innerText = date.toLocaleDateString();
-
-            const reviewCount = game.reviews ? Object.keys(game.reviews).length : 0;
-            document.getElementById('m-review-count').innerText = reviewCount;
-
-            // Reviews List
-            const reviewsList = document.getElementById('reviews-list');
-            reviewsList.innerHTML = "";
-            if(game.reviews) {
-                Object.values(game.reviews).reverse().forEach(review => {
-                    const div = document.createElement('div');
-                    div.className = 'review-item';
-                    div.innerHTML = `
-                        <div class="review-user">${review.name}</div>
-                        <div class="review-text">${review.text}</div>
-                        <div class="review-date">${new Date(review.date).toLocaleDateString()}</div>
-                    `;
-                    reviewsList.appendChild(div);
+        function updateReviewsList(reviews) {
+            const list = document.getElementById('reviews-list');
+            list.innerHTML = "";
+            if(reviews) {
+                Object.values(reviews).reverse().forEach(r => {
+                    list.innerHTML += `<div class="review-item"><div class="review-user">${r.name}</div><div class="review-text">${r.text}</div></div>`;
                 });
+            } else { list.innerHTML = "<div style='color:#666;'>No reviews yet.</div>"; }
+        }
+
+        function updateReviewUI() {
+            if(currentUser) {
+                document.getElementById('review-form-container').style.display = 'block';
+                document.getElementById('review-login-msg').style.display = 'none';
             } else {
-                reviewsList.innerHTML = "<div style='color:#666; font-size:12px;'>No reviews yet.</div>";
+                document.getElementById('review-form-container').style.display = 'none';
+                document.getElementById('review-login-msg').style.display = 'block';
             }
         }
 
-        // --- ACTIONS ---
-        window.trackDownload = () => {
-            if(!currentGameId) return;
-            const countRef = ref(db, `games/${currentGameId}/downloadCount`);
-            runTransaction(countRef, (currentCount) => (currentCount || 0) + 1);
-        };
-
         window.submitReview = () => {
-            if(!currentGameId) return;
-            const name = document.getElementById('reviewName').value;
+            if(!currentGameId || !currentUser) return;
             const text = document.getElementById('reviewText').value;
-
-            if(!name || !text) { alert("Please enter name and review"); return; }
-
+            if(!text) return;
+            
             push(ref(db, `games/${currentGameId}/reviews`), {
-                name: name, text: text, date: Date.now()
+                name: currentUser.displayName || "User",
+                text: text,
+                date: Date.now()
             }).then(() => {
-                document.getElementById('reviewName').value = "";
                 document.getElementById('reviewText').value = "";
+                // Optimistically update UI logic handled by listener
             });
         };
 
+        // --- UI UTILS ---
+        window.filterGames = () => {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            renderGames(allGames.filter(g => g.name.toLowerCase().includes(q)));
+        }
+        
+        window.showAuthModal = (type) => {
+            document.getElementById('authModal').style.display = 'flex';
+            toggleAuthForm(type);
+        }
+        window.closeAuthModal = () => document.getElementById('authModal').style.display = 'none';
+        
+        window.toggleAuthForm = (type) => {
+            document.getElementById('login-form').style.display = type === 'login' ? 'block' : 'none';
+            document.getElementById('signup-form').style.display = type === 'signup' ? 'block' : 'none';
+        }
         window.closeModal = () => {
             currentGameId = null;
             document.getElementById('gameModal').classList.remove('active');
             document.body.style.overflow = 'auto';
-        };
+        }
+        function showToast(msg, type) {
+            const t = document.getElementById("toast");
+            t.innerText = msg; t.className = "show " + type;
+            setTimeout(() => t.className = "", 3000);
+        }
+        window.onclick = (e) => { 
+            if(e.target == document.getElementById('gameModal')) closeModal();
+            if(e.target == document.getElementById('authModal')) closeAuthModal();
+        }
 
-        window.onclick = (e) => { if (e.target == document.getElementById('gameModal')) closeModal(); }
+        // Export global functions
+        window.toggleSidebarView = (view) => setView(view, document.querySelectorAll('.menu-item')[3]); // Shortcut for profile icon
     </script>
 </body>
 </html>
