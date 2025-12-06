@@ -46,7 +46,14 @@
         .btn-login { border: 1px solid var(--primary); color: var(--primary); padding: 8px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: 0.3s; background: transparent; }
         .btn-login:hover { background: var(--primary); color: black; }
         
-        .user-profile-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; display: none; }
+        /* Navbar Profile Icon */
+        .user-profile-icon { 
+            width: 40px; height: 40px; border-radius: 50%; 
+            background: var(--gradient); display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; cursor: pointer; display: none; overflow: hidden;
+            border: 2px solid var(--primary);
+        }
+        .user-profile-icon img { width: 100%; height: 100%; object-fit: cover; }
 
         /* --- LAYOUT: SIDEBAR + MAIN --- */
         .app-layout { display: flex; margin-top: 70px; min-height: 100vh; }
@@ -96,7 +103,7 @@
         .card-rating { font-size: 12px; color: #fbbb00; margin: 5px 0; }
         .card-stats { display: flex; justify-content: space-between; font-size: 11px; color: #888; margin-top: 5px; }
         
-        /* --- AUTH MODAL --- */
+        /* --- AUTH & EDIT MODAL --- */
         .auth-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .auth-box { background: #1b1e26; padding: 30px; border-radius: 12px; width: 350px; text-align: center; border: 1px solid #333; position: relative; }
         .auth-box h2 { margin-top: 0; color: var(--primary); }
@@ -136,8 +143,27 @@
         #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 4px; padding: 16px; position: fixed; z-index: 3000; right: 30px; bottom: 30px; border-left: 5px solid var(--primary); transform: translateY(100px); transition: transform 0.3s; }
         #toast.show { visibility: visible; transform: translateY(0); }
 
+        /* --- PROFILE VIEW STYLES --- */
+        .profile-container { text-align: center; padding-top: 50px; }
+        .profile-pic-large-wrapper {
+            width: 120px; height: 120px; border-radius: 50%; 
+            background: var(--gradient); margin: 0 auto; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 50px; font-weight: bold; overflow: hidden;
+            border: 4px solid #1b1e26;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+        .profile-pic-large-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .btn-edit-profile {
+            background: #333; color: white; border: 1px solid #444;
+            padding: 8px 15px; border-radius: 20px; margin-top: 15px;
+            cursor: pointer; font-size: 12px; transition: 0.3s;
+        }
+        .btn-edit-profile:hover { background: var(--primary); color: black; }
+
         @media(max-width: 768px) {
-            .sidebar { display: none; } /* Hide Sidebar on mobile for now (can add toggle later) */
+            .sidebar { display: none; }
             .main-content { margin-left: 0; }
             .nav-right { gap: 10px; }
             .search-bar input { width: 150px; }
@@ -226,12 +252,22 @@
                 <div id="history-grid" class="grid"></div>
             </div>
 
-            <!-- PROFILE VIEW -->
-            <div id="view-profile" style="display:none; text-align:center; padding-top:50px;">
-                <div style="width:100px; height:100px; border-radius:50%; background:var(--gradient); margin:0 auto; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:bold;" id="profile-pic-large">U</div>
-                <h2 id="profile-name-large">User Name</h2>
-                <p id="profile-email-large" style="color:#888;">user@email.com</p>
-                <p style="margin-top:20px; color:var(--primary);">Member since 2024</p>
+            <!-- PROFILE VIEW (UPDATED WITH EDIT) -->
+            <div id="view-profile" style="display:none;">
+                <div class="profile-container">
+                    <div class="profile-pic-large-wrapper" id="profile-pic-container">
+                        U
+                    </div>
+                    
+                    <h2 id="profile-name-large">User Name</h2>
+                    <p id="profile-email-large" style="color:#888;">user@email.com</p>
+                    
+                    <button class="btn-edit-profile" onclick="openEditProfileModal()">
+                        <i class="fas fa-pen"></i> Edit Profile
+                    </button>
+
+                    <p style="margin-top:20px; color:var(--primary); font-size:12px;">Member since 2024</p>
+                </div>
             </div>
 
         </div>
@@ -264,6 +300,27 @@
                     Already have an account? <span>Sign In</span>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- EDIT PROFILE MODAL (NEW) -->
+    <div id="editProfileModal" class="auth-modal">
+        <div class="auth-box">
+            <button class="close-btn" onclick="closeEditProfileModal()" style="top:10px; right:10px;">&times;</button>
+            <h2>Edit Profile</h2>
+            
+            <div style="margin-bottom:15px;">
+                <label for="edit-profile-file" style="cursor:pointer; display:inline-block;">
+                    <div style="width:80px; height:80px; border-radius:50%; background:#222; margin:0 auto; display:flex; align-items:center; justify-content:center; border:1px dashed #666;">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <span style="font-size:12px; color:#888;">Change Photo</span>
+                </label>
+                <input type="file" id="edit-profile-file" hidden accept="image/*">
+            </div>
+
+            <input type="text" id="edit-profile-name" class="auth-input" placeholder="Display Name">
+            <button class="auth-btn" onclick="saveProfileChanges()">Save Changes</button>
         </div>
     </div>
 
@@ -331,47 +388,60 @@
         // State
         let allGames = [];
         let currentUser = null;
-        let userWishlist = {}; // { gameId: true }
-        let userDownloads = {}; // { gameId: true }
+        let userWishlist = {}; 
+        let userDownloads = {}; 
         let currentGameId = null;
 
         // --- AUTH LOGIC ---
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             if(user) {
-                // UI Updates
+                // Logged In UI
                 document.getElementById('nav-login-btn').style.display = 'none';
                 document.getElementById('nav-profile-btn').style.display = 'flex';
-                document.getElementById('nav-profile-btn').innerText = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
                 document.getElementById('sidebar-logout').style.display = 'flex';
                 
-                // Profile Page Data
-                document.getElementById('profile-name-large').innerText = user.displayName || "User";
-                document.getElementById('profile-email-large').innerText = user.email;
-                document.getElementById('profile-pic-large').innerText = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
-
-                // Fetch User Data (Wishlist/History)
+                updateProfileDisplay(user);
                 fetchUserData(user.uid);
             } else {
-                // UI Reset
+                // Logged Out UI
                 document.getElementById('nav-login-btn').style.display = 'block';
                 document.getElementById('nav-profile-btn').style.display = 'none';
                 document.getElementById('sidebar-logout').style.display = 'none';
                 userWishlist = {};
                 userDownloads = {};
-                renderGames(allGames); // Re-render to remove hearts if needed
+                renderGames(allGames);
             }
             updateReviewUI();
         });
 
+        function updateProfileDisplay(user) {
+            // Navbar Icon
+            const navIcon = document.getElementById('nav-profile-btn');
+            if(user.photoURL) {
+                navIcon.innerHTML = `<img src="${user.photoURL}">`;
+            } else {
+                navIcon.innerHTML = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
+            }
+
+            // Profile View
+            document.getElementById('profile-name-large').innerText = user.displayName || "User";
+            document.getElementById('profile-email-large').innerText = user.email;
+            
+            const largePic = document.getElementById('profile-pic-container');
+            if(user.photoURL) {
+                largePic.innerHTML = `<img src="${user.photoURL}">`;
+            } else {
+                largePic.innerHTML = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
+            }
+        }
+
         async function fetchUserData(uid) {
-            // Get Wishlist
             onValue(ref(db, `users/${uid}/wishlist`), (snap) => {
                 userWishlist = snap.val() || {};
-                renderGames(allGames); // Re-render to show active hearts
+                renderGames(allGames); 
                 renderWishlist();
             });
-            // Get History
             onValue(ref(db, `users/${uid}/history`), (snap) => {
                 userDownloads = snap.val() || {};
                 renderHistory();
@@ -395,8 +465,8 @@
             createUserWithEmailAndPassword(auth, email, pass).then((cred) => {
                 updateProfile(cred.user, { displayName: name }).then(() => {
                     closeAuthModal(); showToast("Account created!", "success");
-                    // Create DB entry
                     update(ref(db, `users/${cred.user.uid}`), { name: name, email: email });
+                    updateProfileDisplay(cred.user);
                 });
             }).catch(e => alert(e.message));
         };
@@ -405,9 +475,62 @@
             signOut(auth).then(() => { showToast("Logged out", "success"); setView('home'); });
         };
 
+        // --- EDIT PROFILE LOGIC ---
+        window.openEditProfileModal = () => {
+            if(!currentUser) return;
+            document.getElementById('edit-profile-name').value = currentUser.displayName;
+            document.getElementById('editProfileModal').style.display = 'flex';
+        }
+
+        window.closeEditProfileModal = () => document.getElementById('editProfileModal').style.display = 'none';
+
+        window.saveProfileChanges = async () => {
+            const newName = document.getElementById('edit-profile-name').value;
+            const fileInput = document.getElementById('edit-profile-file');
+            
+            let photoURL = currentUser.photoURL;
+
+            // Handle Image Upload if exists
+            if(fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                photoURL = await compressImage(file);
+            }
+
+            // Update Auth
+            updateProfile(currentUser, { displayName: newName, photoURL: photoURL }).then(() => {
+                // Update Database
+                update(ref(db, `users/${currentUser.uid}`), { name: newName, photoURL: photoURL });
+                
+                showToast("Profile Updated!", "success");
+                updateProfileDisplay(currentUser);
+                closeEditProfileModal();
+            }).catch(e => alert(e.message));
+        }
+
+        // Image Compression (Same as Admin Panel)
+        function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 300; // Smaller for profile pics
+                        const scaleSize = MAX_WIDTH / img.width;
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scaleSize;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.7));
+                    }
+                }
+            });
+        }
+
         // --- MAIN APP LOGIC ---
         
-        // Fetch Games
         onValue(ref(db, 'games'), (snapshot) => {
             document.getElementById('loading').style.display = "none";
             const data = snapshot.val();
@@ -419,45 +542,34 @@
             }
         });
 
-        // Render Home Grid
         window.renderGames = (games) => {
             const grid = document.getElementById('game-grid');
             grid.innerHTML = "";
             games.forEach(game => grid.appendChild(createCard(game)));
         };
 
-        // Render Wishlist Grid
         function renderWishlist() {
             const grid = document.getElementById('wishlist-grid');
             grid.innerHTML = "";
             const wishedGames = allGames.filter(g => userWishlist[g.id]);
-            
-            if(wishedGames.length === 0) {
-                document.getElementById('wishlist-empty').style.display = 'block';
-            } else {
+            if(wishedGames.length === 0) document.getElementById('wishlist-empty').style.display = 'block';
+            else {
                 document.getElementById('wishlist-empty').style.display = 'none';
                 wishedGames.forEach(game => grid.appendChild(createCard(game)));
             }
         }
 
-        // Render History Grid
         function renderHistory() {
             const grid = document.getElementById('history-grid');
             grid.innerHTML = "";
             const historyGames = allGames.filter(g => userDownloads[g.id]);
-            
-            if(historyGames.length === 0) {
-                grid.innerHTML = "<div style='color:#666; text-align:center; width:100%;'>No downloads yet.</div>";
-            } else {
-                historyGames.forEach(game => grid.appendChild(createCard(game)));
-            }
+            if(historyGames.length === 0) grid.innerHTML = "<div style='color:#666; text-align:center; width:100%;'>No downloads yet.</div>";
+            else historyGames.forEach(game => grid.appendChild(createCard(game)));
         }
 
-        // Helper: Create a Card HTML Element
         function createCard(game) {
             const card = document.createElement('div');
             card.className = 'card';
-            
             const displayImg = game.logo || "https://via.placeholder.com/300";
             const isLiked = userWishlist[game.id] ? 'active' : '';
 
@@ -483,59 +595,34 @@
             return card;
         }
 
-        // --- ACTIONS ---
-
         window.toggleWishlist = (gameId) => {
             if(!currentUser) return showAuthModal('login');
-            
             const isLiked = userWishlist[gameId];
             const updates = {};
-            if(isLiked) {
-                updates[`users/${currentUser.uid}/wishlist/${gameId}`] = null; // Remove
-                showToast("Removed from wishlist", "success");
-            } else {
-                updates[`users/${currentUser.uid}/wishlist/${gameId}`] = true; // Add
-                showToast("Added to wishlist", "success");
-            }
+            updates[`users/${currentUser.uid}/wishlist/${gameId}`] = isLiked ? null : true;
             update(ref(db), updates);
+            showToast(isLiked ? "Removed from wishlist" : "Added to wishlist", "success");
         };
 
         window.handleDownload = () => {
             if(!currentGameId) return;
-            
-            // 1. Global Count
             const countRef = ref(db, `games/${currentGameId}/downloadCount`);
             runTransaction(countRef, (count) => (count || 0) + 1);
-
-            // 2. Personal History (if logged in)
-            if(currentUser) {
-                update(ref(db, `users/${currentUser.uid}/history`), { [currentGameId]: true });
-            }
+            if(currentUser) update(ref(db, `users/${currentUser.uid}/history`), { [currentGameId]: true });
         };
 
-        // --- VIEW NAVIGATION ---
         window.setView = (viewId, btn) => {
-            // Hide all views
-            ['home', 'wishlist', 'history', 'profile'].forEach(v => {
-                document.getElementById('view-'+v).style.display = 'none';
-            });
-            // Show selected
+            ['home', 'wishlist', 'history', 'profile'].forEach(v => document.getElementById('view-'+v).style.display = 'none');
             document.getElementById('view-'+viewId).style.display = 'block';
-            
-            // Update Sidebar Active State
             if(btn) {
                 document.querySelectorAll('.sidebar .menu-item').forEach(el => el.classList.remove('active'));
                 btn.classList.add('active');
             }
-            
-            // Mobile: Close sidebar if needed (implementation left simple for now)
         };
 
         // --- MODAL & REVIEWS ---
-        
         window.openModal = (game) => {
             currentGameId = game.id;
-            // Set content... (Title, Desc, Logo)
             document.getElementById('m-title').innerText = game.name;
             document.getElementById('m-desc').innerText = game.desc;
             document.getElementById('m-logo').src = game.logo;
@@ -543,24 +630,14 @@
             document.getElementById('m-downloads').innerText = game.downloadCount || 0;
             document.getElementById('m-updated').innerText = new Date(game.timestamp || Date.now()).toLocaleDateString();
 
-            // Gallery
             const gal = document.getElementById('m-screenshots'); gal.innerHTML = "";
-            const addImg = (s) => { 
-                if(!s)return; 
-                let i=document.createElement('img'); i.src=s; 
-                i.onerror=function(){this.style.display='none'}; 
-                gal.appendChild(i); 
-            };
+            const addImg = (s) => { if(!s)return; let i=document.createElement('img'); i.src=s; i.onerror=function(){this.style.display='none'}; gal.appendChild(i); };
             if(game.screenshots && Array.isArray(game.screenshots)) game.screenshots.forEach(addImg);
             else { if(game.sc1) addImg(game.sc1); if(game.sc2) addImg(game.sc2); if(game.sc3) addImg(game.sc3); if(game.sc4) addImg(game.sc4); }
             
-            // Banner
             const f = gal.querySelector('img');
             document.getElementById('m-cover').src = f ? f.src : game.logo;
-
-            // Reviews
             updateReviewsList(game.reviews);
-
             document.getElementById('gameModal').classList.add('active');
             document.body.style.overflow = 'hidden';
         };
@@ -568,11 +645,8 @@
         function updateReviewsList(reviews) {
             const list = document.getElementById('reviews-list');
             list.innerHTML = "";
-            if(reviews) {
-                Object.values(reviews).reverse().forEach(r => {
-                    list.innerHTML += `<div class="review-item"><div class="review-user">${r.name}</div><div class="review-text">${r.text}</div></div>`;
-                });
-            } else { list.innerHTML = "<div style='color:#666;'>No reviews yet.</div>"; }
+            if(reviews) Object.values(reviews).reverse().forEach(r => list.innerHTML += `<div class="review-item"><div class="review-user">${r.name}</div><div class="review-text">${r.text}</div></div>`);
+            else list.innerHTML = "<div style='color:#666;'>No reviews yet.</div>";
         }
 
         function updateReviewUI() {
@@ -589,15 +663,11 @@
             if(!currentGameId || !currentUser) return;
             const text = document.getElementById('reviewText').value;
             if(!text) return;
-            
             push(ref(db, `games/${currentGameId}/reviews`), {
                 name: currentUser.displayName || "User",
                 text: text,
                 date: Date.now()
-            }).then(() => {
-                document.getElementById('reviewText').value = "";
-                // Optimistically update UI logic handled by listener
-            });
+            }).then(() => document.getElementById('reviewText').value = "");
         };
 
         // --- UI UTILS ---
@@ -605,34 +675,20 @@
             const q = document.getElementById('searchInput').value.toLowerCase();
             renderGames(allGames.filter(g => g.name.toLowerCase().includes(q)));
         }
-        
-        window.showAuthModal = (type) => {
-            document.getElementById('authModal').style.display = 'flex';
-            toggleAuthForm(type);
-        }
+        window.showAuthModal = (type) => { document.getElementById('authModal').style.display = 'flex'; toggleAuthForm(type); }
         window.closeAuthModal = () => document.getElementById('authModal').style.display = 'none';
-        
         window.toggleAuthForm = (type) => {
             document.getElementById('login-form').style.display = type === 'login' ? 'block' : 'none';
             document.getElementById('signup-form').style.display = type === 'signup' ? 'block' : 'none';
         }
-        window.closeModal = () => {
-            currentGameId = null;
-            document.getElementById('gameModal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-        function showToast(msg, type) {
-            const t = document.getElementById("toast");
-            t.innerText = msg; t.className = "show " + type;
-            setTimeout(() => t.className = "", 3000);
-        }
+        window.closeModal = () => { currentGameId = null; document.getElementById('gameModal').classList.remove('active'); document.body.style.overflow = 'auto'; }
+        function showToast(msg, type) { const t = document.getElementById("toast"); t.innerText = msg; t.className = "show " + type; setTimeout(() => t.className = "", 3000); }
         window.onclick = (e) => { 
             if(e.target == document.getElementById('gameModal')) closeModal();
             if(e.target == document.getElementById('authModal')) closeAuthModal();
         }
 
-        // Export global functions
-        window.toggleSidebarView = (view) => setView(view, document.querySelectorAll('.menu-item')[3]); // Shortcut for profile icon
+        window.toggleSidebarView = (view) => setView(view, document.querySelectorAll('.menu-item')[3]);
     </script>
 </body>
 </html>
