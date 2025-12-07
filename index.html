@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexus Gaming Store</title>
     
-    <!-- Google Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -22,7 +22,7 @@
         }
 
         * { box-sizing: border-box; outline: none; }
-        body { margin: 0; font-family: 'Roboto', sans-serif; background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden;}
+        body { margin: 0; font-family: 'Poppins', sans-serif; background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden;}
         a { text-decoration: none; color: inherit; }
 
         /* --- NAVBAR --- */
@@ -33,7 +33,6 @@
             z-index: 1000; 
         }
         .logo { font-size: 22px; font-weight: 800; color: var(--primary); letter-spacing: 1px; display:flex; align-items:center; gap:10px;}
-        
         .nav-right { display: flex; align-items: center; gap: 20px; }
 
         .search-bar { position: relative; }
@@ -41,7 +40,6 @@
         .search-bar input:focus { width: 250px; border-color: var(--primary); }
         .search-bar i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #888; font-size: 14px; }
 
-        /* AUTH BUTTONS */
         .btn-login { border: 1px solid var(--primary); color: var(--primary); padding: 6px 15px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.3s; background: transparent; font-size: 14px; }
         .btn-login:hover { background: var(--primary); color: black; }
         
@@ -67,15 +65,16 @@
 
         .main-content { margin-left: 240px; flex: 1; padding: 20px; }
 
-        /* --- HERO --- */
+        /* --- HERO & GRID --- */
         .hero-banner {
             border-radius: 15px; height: 280px; display: flex; align-items: center; padding: 40px;
-            background: linear-gradient(to right, rgba(0,0,0,0.9), transparent), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            /* Boy using laptop image as requested */
+            background: linear-gradient(to right, rgba(0,0,0,0.9), transparent), 
+                        url('https://images.unsplash.com/photo-1605901309584-818e25960b8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
             background-size: cover; background-position: center; margin-bottom: 30px;
         }
         .hero-text h1 { font-size: 2.8rem; margin: 0; text-shadow: 0 5px 20px rgba(0,0,0,0.8); line-height: 1.1; }
         
-        /* --- GRID --- */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
         .card { background-color: var(--bg-card); border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid #333; transition: 0.3s; position: relative; }
         .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -95,7 +94,6 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .modal-overlay.active { display: flex; }
         
-        /* Auth Box */
         .auth-box { background: #1b1e26; padding: 30px; border-radius: 12px; width: 350px; text-align: center; border: 1px solid #333; position: relative; }
         .auth-input { width: 100%; padding: 12px; margin: 10px 0; background: #0f1014; border: 1px solid #333; color: white; border-radius: 6px; }
         .auth-btn { width: 100%; padding: 12px; background: var(--gradient); border: none; color: white; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; }
@@ -117,58 +115,48 @@
         .ss-grid img { width: 100%; height: auto; max-height: 250px; object-fit: contain; border-radius: 8px; cursor: pointer; background: #000; border: 1px solid #333; }
         .btn-download { background: var(--gradient); color: white; padding: 15px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 16px; display: block; text-align: center; margin-top: 20px; }
         
-        /* --- REVIEWS CSS (APKPure Style) --- */
+        /* --- REVIEWS CSS --- */
         .reviews-section { margin-top: 30px; }
         .review-form textarea { width: 100%; background: #111; border: 1px solid #333; color: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; resize: none; }
         .btn-submit { background: #333; color: white; border: none; padding: 8px 25px; cursor: pointer; border-radius: 20px; font-weight: 600; font-size: 13px; }
         .btn-submit:hover { background: var(--primary); color: black; }
         
-        /* THE REVIEW CARD */
-        .review-item { 
-            display: flex; gap: 15px; 
-            padding: 20px 0; 
-            border-bottom: 1px solid rgba(255,255,255,0.08); 
-            position: relative;
-        }
-        
-        /* Avatar */
-        .review-avatar {
-            width: 40px; height: 40px; border-radius: 50%; 
-            background: var(--gradient); display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 18px; color: white; flex-shrink: 0;
-            overflow: hidden;
-        }
+        .review-item { display: flex; gap: 15px; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; }
+        .review-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: white; flex-shrink: 0; overflow: hidden; }
         .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Content */
         .review-content-box { flex: 1; }
         .review-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
         .review-name { font-weight: 600; color: white; font-size: 14px; }
         .review-date { font-size: 11px; color: #888; margin-left: 10px; font-weight: normal; }
         .review-text { color: #ccc; font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
 
-        /* THREE DOTS MENU (Top Right) */
+        /* THREE DOTS MENU */
         .review-menu-container { position: relative; }
-        .review-dots { 
-            color: #888; cursor: pointer; font-size: 16px; padding: 5px; 
-            transition: 0.2s;
-        }
+        .review-dots { color: #888; cursor: pointer; font-size: 16px; padding: 5px; transition: 0.2s; }
         .review-dots:hover { color: white; }
-        
-        /* Dropdown */
-        .review-dropdown { 
-            display: none; position: absolute; right: 0; top: 25px; 
-            background: #252830; border: 1px solid #444; border-radius: 8px; 
-            box-shadow: 0 5px 20px rgba(0,0,0,0.6); z-index: 100; width: 130px;
-            overflow: hidden;
-        }
+        .review-dropdown { display: none; position: absolute; right: 0; top: 25px; background: #252830; border: 1px solid #444; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.6); z-index: 100; width: 130px; overflow: hidden; }
         .review-dropdown.show { display: block; }
         .review-dropdown div { padding: 10px 15px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #ccc; transition: 0.2s; }
         .review-dropdown div:hover { background: #333; color: white; }
         .review-dropdown div.delete-opt { color: var(--danger); border-top: 1px solid #333; }
         .review-dropdown div.delete-opt:hover { background: rgba(255, 71, 87, 0.1); }
 
-        /* Toast */
+        /* --- PROFILE STYLES --- */
+        .profile-container { text-align: center; padding-top: 50px; }
+        .profile-pic-large-wrapper { 
+            width: 120px; height: 120px; border-radius: 50%; 
+            background: var(--gradient); margin: 0 auto; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 50px; font-weight: bold; overflow: hidden; 
+            border: 4px solid #1b1e26; position: relative; cursor: pointer;
+        }
+        .profile-pic-large-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .camera-overlay { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.6); font-size: 14px; padding: 5px; color: white; display: none; }
+        .profile-pic-large-wrapper:hover .camera-overlay { display: block; }
+        
+        .btn-edit-profile { background: #333; color: white; border: 1px solid #444; padding: 10px 25px; border-radius: 25px; margin-top: 20px; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; gap: 10px; }
+        .btn-edit-profile:hover { background: white; color: black; }
+
         #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 4px; padding: 16px; position: fixed; z-index: 3000; right: 30px; bottom: 30px; border-left: 5px solid var(--primary); transform: translateY(100px); transition: transform 0.3s; }
         #toast.show { visibility: visible; transform: translateY(0); }
 
@@ -179,25 +167,23 @@
 
     <div id="toast">Notification</div>
 
-    <!-- NAVBAR -->
     <nav>
         <div class="logo"><i class="fas fa-gamepad"></i> NEXUS</div>
         <div class="nav-right">
-            <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Search..." onkeyup="filterGames()"></div>
-            <button id="nav-login-btn" class="btn-login" onclick="showAuthModal('login')">Log In</button>
-            <div id="nav-profile-btn" class="user-profile-icon" onclick="toggleSidebarView('profile')">U</div>
+            <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Search..." onkeyup="window.filterGames()"></div>
+            <button id="nav-login-btn" class="btn-login" onclick="window.showAuthModal('login')">Log In</button>
+            <div id="nav-profile-btn" class="user-profile-icon" onclick="window.toggleSidebarView('profile')">U</div>
         </div>
     </nav>
 
-    <!-- LAYOUT -->
     <div class="app-layout">
         <div class="sidebar">
-            <div class="menu-item active" onclick="setView('home', this)"><i class="fas fa-home"></i> Home</div>
-            <div class="menu-item" onclick="setView('wishlist', this)"><i class="fas fa-heart"></i> My Wishlist</div>
-            <div class="menu-item" onclick="setView('history', this)"><i class="fas fa-history"></i> History</div>
-            <div class="menu-item" onclick="setView('profile', this)"><i class="fas fa-user"></i> My Profile</div>
+            <div class="menu-item active" onclick="window.setView('home', this)"><i class="fas fa-home"></i> Home</div>
+            <div class="menu-item" onclick="window.setView('wishlist', this)"><i class="fas fa-heart"></i> My Wishlist</div>
+            <div class="menu-item" onclick="window.setView('history', this)"><i class="fas fa-history"></i> History</div>
+            <div class="menu-item" onclick="window.setView('profile', this)"><i class="fas fa-user"></i> My Profile</div>
             <div style="flex:1"></div>
-            <div id="sidebar-logout" class="menu-item" style="color:var(--danger); display:none;" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</div>
+            <div id="sidebar-logout" class="menu-item" style="color:var(--danger); display:none;" onclick="window.logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</div>
         </div>
 
         <div class="main-content">
@@ -209,12 +195,21 @@
             </div>
             <div id="view-wishlist" style="display:none;"><h2>My Wishlist</h2><div id="wishlist-grid" class="grid"></div><div id="wishlist-empty" style="text-align:center; margin-top:50px; color:#666;">Empty list.</div></div>
             <div id="view-history" style="display:none;"><h2>Download History</h2><div id="history-grid" class="grid"></div></div>
+            
+            <!-- PROFILE VIEW -->
             <div id="view-profile" style="display:none;">
-                <div style="text-align:center; padding-top:50px;">
-                    <div class="user-profile-icon" id="profile-pic-container" style="width:100px; height:100px; margin:0 auto; font-size:40px; display:flex;">U</div>
-                    <h2 id="profile-name-large">User</h2>
-                    <p id="profile-email-large" style="color:#888;">user@email.com</p>
-                    <button class="btn-login" style="margin-top:15px; border-color:#444; color:white;" onclick="openEditProfileModal()"><i class="fas fa-edit"></i> Edit Profile</button>
+                <div class="profile-container">
+                    <div class="profile-pic-large-wrapper" id="profile-pic-container" onclick="window.openEditProfileModal()">
+                        U
+                        <div class="camera-overlay"><i class="fas fa-camera"></i></div>
+                    </div>
+                    <h2 id="profile-name-large" style="margin-bottom: 5px;">User</h2>
+                    <p id="profile-email-large" style="color:#888; margin-top:0;">user@email.com</p>
+                    
+                    <!-- EDIT BUTTON (FIXED) -->
+                    <button class="btn-edit-profile" onclick="window.openEditProfileModal()">
+                        <i class="fas fa-pen"></i> Edit Profile
+                    </button>
                 </div>
             </div>
         </div>
@@ -223,28 +218,29 @@
     <!-- MODALS -->
     <div id="authModal" class="auth-modal">
         <div class="auth-box">
-            <button class="close-btn" onclick="closeAuthModal()" style="top:10px; right:10px;">&times;</button>
+            <button class="close-btn" onclick="window.closeAuthModal()" style="top:10px; right:10px;">&times;</button>
             <div id="login-form">
                 <h2>Sign In</h2>
                 <input type="email" id="login-email" class="auth-input" placeholder="Email">
                 <input type="password" id="login-pass" class="auth-input" placeholder="Password">
-                <button class="auth-btn" onclick="loginUser()">Login</button>
-                <div class="toggle-auth" onclick="toggleAuthForm('signup')">New here? <span>Sign Up</span></div>
+                <button class="auth-btn" onclick="window.loginUser()">Login</button>
+                <div class="toggle-auth" onclick="window.toggleAuthForm('signup')">New here? <span>Sign Up</span></div>
             </div>
             <div id="signup-form" style="display:none;">
                 <h2>Create Account</h2>
                 <input type="text" id="signup-name" class="auth-input" placeholder="Name">
                 <input type="email" id="signup-email" class="auth-input" placeholder="Email">
                 <input type="password" id="signup-pass" class="auth-input" placeholder="Password">
-                <button class="auth-btn" onclick="signupUser()">Sign Up</button>
-                <div class="toggle-auth" onclick="toggleAuthForm('login')">Have account? <span>Login</span></div>
+                <button class="auth-btn" onclick="window.signupUser()">Sign Up</button>
+                <div class="toggle-auth" onclick="window.toggleAuthForm('login')">Have account? <span>Login</span></div>
             </div>
         </div>
     </div>
 
-    <div id="editProfileModal" class="auth-modal">
+    <!-- EDIT PROFILE MODAL (FIXED) -->
+    <div id="editProfileModal" class="modal-overlay" style="z-index: 4000;">
         <div class="auth-box">
-            <button class="close-btn" onclick="closeEditProfileModal()" style="top:10px; right:10px;">&times;</button>
+            <button class="close-btn" onclick="window.closeEditProfileModal()" style="top:10px; right:10px;">&times;</button>
             <h2>Edit Profile</h2>
             <div style="margin-bottom:15px;">
                 <label for="edit-profile-file" style="cursor:pointer; display:inline-block;">
@@ -256,14 +252,14 @@
                 <input type="file" id="edit-profile-file" hidden accept="image/*">
             </div>
             <input type="text" id="edit-profile-name" class="auth-input" placeholder="Display Name">
-            <button class="auth-btn" onclick="saveProfileChanges()">Save</button>
+            <button class="auth-btn" onclick="window.saveProfileChanges()">Save</button>
         </div>
     </div>
 
     <!-- GAME MODAL -->
     <div id="gameModal" class="modal-overlay">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <button class="close-btn" onclick="window.closeModal()">&times;</button>
             <img id="m-cover" class="modal-header-img" src="">
             <div class="modal-body">
                 <div class="game-head-row">
@@ -280,7 +276,7 @@
                 <div id="m-desc" class="game-desc"></div>
                 <div class="gallery-title">Gallery</div>
                 <div id="m-screenshots" class="ss-grid"></div>
-                <a id="m-download" href="#" target="_blank" class="btn-download" onclick="handleDownload()">INSTALL NOW</a>
+                <a id="m-download" href="#" target="_blank" class="btn-download" onclick="window.handleDownload()">INSTALL NOW</a>
                 
                 <!-- REVIEWS -->
                 <div class="reviews-section">
@@ -288,23 +284,24 @@
                     <div class="review-form" id="review-form-container">
                         <textarea id="reviewText" rows="2" placeholder="Write a review..."></textarea>
                         <div style="display:flex; gap:10px;">
-                            <button id="btn-post-review" class="btn-submit" onclick="submitReview()">Post</button>
-                            <button id="btn-cancel-edit" class="btn-submit" style="background:#444; display:none;" onclick="cancelEditReview()">Cancel</button>
+                            <button id="btn-post-review" class="btn-submit" onclick="window.submitReview()">Post</button>
+                            <button id="btn-cancel-edit" class="btn-submit" style="background:#444; display:none;" onclick="window.cancelEditReview()">Cancel</button>
                         </div>
                     </div>
-                    <div id="review-login-msg" style="display:none; color:#888; margin-bottom:15px; font-size:13px;">Please <span style="color:var(--primary); cursor:pointer;" onclick="showAuthModal('login')">Login</span> to review.</div>
+                    <div id="review-login-msg" style="display:none; color:#888; margin-bottom:15px; font-size:13px;">Please <span style="color:var(--primary); cursor:pointer;" onclick="window.showAuthModal('login')">Login</span> to review.</div>
                     <div id="reviews-list"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- LOGIC -->
+    <!-- FIREBASE LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
         import { getDatabase, ref, onValue, push, runTransaction, update, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
+        // --- PASTE YOUR CONFIG HERE ---
         const firebaseConfig = {
             apiKey: "AIzaSyCn1FBaxDwbvC28VWXAcq557uCidl-JHy0",
             authDomain: "app-store-6b5d4.firebaseapp.com",
@@ -321,6 +318,7 @@
         
         let allGames=[], currentUser=null, userWishlist={}, userDownloads={}, currentGameId=null, editingReviewId=null;
 
+        // AUTH
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             if(user) {
@@ -344,16 +342,16 @@
             onValue(ref(db, `users/${uid}/history`), (s) => { userDownloads=s.val()||{}; renderHistory(); });
         }
 
-        window.loginUser = () => signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-pass').value).then(()=>{closeAuthModal();showToast("Success","success");}).catch(e=>alert(e.message));
+        // GLOBAL FUNCTIONS ATTACHED TO WINDOW
+        window.loginUser = () => signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-pass').value).then(()=>{window.closeAuthModal();showToast("Success","success");}).catch(e=>alert(e.message));
         window.signupUser = () => {
             const name=document.getElementById('signup-name').value;
             createUserWithEmailAndPassword(auth, document.getElementById('signup-email').value, document.getElementById('signup-pass').value).then((c)=>{
-                updateProfile(c.user,{displayName:name}).then(()=>{ update(ref(db,`users/${c.user.uid}`),{name:name,email:c.user.email}); closeAuthModal(); showToast("Account created","success"); updateProfileDisplay(c.user); });
+                updateProfile(c.user,{displayName:name}).then(()=>{ update(ref(db,`users/${c.user.uid}`),{name:name,email:c.user.email}); window.closeAuthModal(); showToast("Account created","success"); updateProfileDisplay(c.user); });
             }).catch(e=>alert(e.message));
         };
-        window.logoutUser = () => signOut(auth).then(()=>{showToast("Logged out","success"); setView('home');});
+        window.logoutUser = () => signOut(auth).then(()=>{showToast("Logged out","success"); window.setView('home');});
 
-        // --- MAIN LOGIC ---
         onValue(ref(db, 'games'), (snapshot) => {
             document.getElementById('loading').style.display='none'; const data=snapshot.val();
             if(data) { allGames=Object.entries(data).map(([k,v])=>({...v,id:k})).reverse(); renderGames(allGames); renderWishlist(); renderHistory(); 
@@ -367,13 +365,12 @@
         function createCard(game) {
             const div=document.createElement('div'); div.className='card';
             const img=game.logo||"https://via.placeholder.com/300"; const liked=userWishlist[game.id]?'active':'';
-            div.innerHTML=`<button class="wishlist-btn ${liked}" onclick="event.stopPropagation();toggleWishlist('${game.id}')"><i class="fas fa-heart"></i></button><div class="card-img-wrapper"><img src="${img}" onerror="this.src='https://via.placeholder.com/300'"></div><div class="card-content"><h3>${game.name}</h3><div class="card-stats"><span>${game.downloadCount||0} Downloads</span><span class="verified-badge">FREE</span></div></div>`;
-            div.onclick=()=>openModal(game); return div;
+            div.innerHTML=`<button class="wishlist-btn ${liked}" onclick="event.stopPropagation();window.toggleWishlist('${game.id}')"><i class="fas fa-heart"></i></button><div class="card-img-wrapper"><img src="${img}" onerror="this.src='https://via.placeholder.com/300'"></div><div class="card-content"><h3>${game.name}</h3><div class="card-stats"><span>${game.downloadCount||0} Downloads</span><span class="verified-badge">FREE</span></div></div>`;
+            div.onclick=()=>window.openModal(game); return div;
         }
 
-        window.toggleWishlist = (id) => { if(!currentUser)return showAuthModal('login'); const u={}; u[`users/${currentUser.uid}/wishlist/${id}`]=userWishlist[id]?null:true; update(ref(db),u); };
+        window.toggleWishlist = (id) => { if(!currentUser)return window.showAuthModal('login'); const u={}; u[`users/${currentUser.uid}/wishlist/${id}`]=userWishlist[id]?null:true; update(ref(db),u); };
 
-        // --- REVIEWS ---
         window.openModal = (game) => {
             currentGameId=game.id;
             document.getElementById('m-title').innerText=game.name; document.getElementById('m-desc').innerText=game.desc;
@@ -387,7 +384,7 @@
 
             updateReviewsList(game.reviews);
             document.getElementById('gameModal').classList.add('active'); document.body.style.overflow='hidden';
-            cancelEditReview();
+            window.cancelEditReview();
         };
 
         function updateReviewsList(reviews) {
@@ -396,20 +393,18 @@
                 Object.entries(reviews).reverse().forEach(([key, r]) => {
                     const isMine = currentUser && r.uid === currentUser.uid;
                     const date = new Date(r.date).toLocaleDateString();
-                    // Avatar Logic
-                    let avatarHtml = `<div class="review-avatar">${r.name.charAt(0).toUpperCase()}</div>`;
-                    // If user has saved photo URL in review (optional enhancement later), else default initial
+                    let photo = `<div class="review-avatar">${r.name.charAt(0).toUpperCase()}</div>`;
+                    if(r.photoURL) photo = `<div class="review-avatar"><img src="${r.photoURL}"></div>`;
                     
                     let menu = "";
                     if(isMine) {
-                        // Safe text escape
                         const safeText = r.text.replace(/'/g, "\\'").replace(/"/g, "&quot;");
                         menu = `
                             <div class="review-menu-container">
-                                <i class="fas fa-ellipsis-v review-dots" onclick="toggleReviewMenu('${key}')"></i>
+                                <i class="fas fa-ellipsis-v review-dots" onclick="event.stopPropagation(); window.toggleReviewMenu('${key}')"></i>
                                 <div id="menu-${key}" class="review-dropdown">
-                                    <div onclick="editReview('${key}', '${safeText}')"><i class="fas fa-edit"></i> Edit</div>
-                                    <div onclick="deleteReview('${key}')" class="delete-opt"><i class="fas fa-trash"></i> Delete</div>
+                                    <div onclick="window.editReview('${key}', '${safeText}')"><i class="fas fa-edit"></i> Edit</div>
+                                    <div onclick="window.deleteReview('${key}')" class="delete-opt"><i class="fas fa-trash"></i> Delete</div>
                                 </div>
                             </div>
                         `;
@@ -417,7 +412,7 @@
 
                     list.innerHTML += `
                         <div class="review-item">
-                            ${avatarHtml}
+                            ${photo}
                             <div class="review-content-box">
                                 <div class="review-header">
                                     <div><span class="review-name">${r.name}</span><span class="review-date">${date}</span></div>
@@ -432,14 +427,18 @@
         }
 
         window.toggleReviewMenu = (key) => {
-            const m=document.getElementById(`menu-${key}`);
-            document.querySelectorAll('.review-dropdown').forEach(d=>{if(d!==m)d.classList.remove('show')});
-            m.classList.toggle('show');
+            const m = document.getElementById(`menu-${key}`);
+            const isVisible = m.classList.contains('show');
+            document.querySelectorAll('.review-dropdown').forEach(d => d.classList.remove('show'));
+            if(!isVisible) m.classList.add('show');
         };
+
         window.onclick = (e) => {
-            if(!e.target.matches('.review-dots')) document.querySelectorAll('.review-dropdown').forEach(d=>d.classList.remove('show'));
-            if(e.target.id=='gameModal')closeModal(); if(e.target.id=='authModal')closeAuthModal();
-        }
+            if(!e.target.matches('.review-dots')) document.querySelectorAll('.review-dropdown').forEach(d => d.classList.remove('show'));
+            if(e.target.id=='gameModal') window.closeModal(); 
+            if(e.target.id=='authModal') window.closeAuthModal();
+            if(e.target.id=='editProfileModal') window.closeEditProfileModal();
+        };
 
         window.deleteReview = (key) => { if(confirm("Delete?")) remove(ref(db, `games/${currentGameId}/reviews/${key}`)); };
         
@@ -462,13 +461,17 @@
             if(!currentGameId || !currentUser) return;
             const txt = document.getElementById('reviewText').value; if(!txt)return;
             
+            const reviewData = {
+                name: currentUser.displayName||"User", uid: currentUser.uid, 
+                text: txt, date: Date.now(), photoURL: currentUser.photoURL || null
+            };
+
             if(editingReviewId) {
                 update(ref(db, `games/${currentGameId}/reviews/${editingReviewId}`), { text: txt, date: Date.now() })
-                .then(() => { cancelEditReview(); showToast("Updated","success"); });
+                .then(() => { window.cancelEditReview(); showToast("Updated","success"); });
             } else {
-                push(ref(db, `games/${currentGameId}/reviews`), {
-                    name: currentUser.displayName||"User", uid: currentUser.uid, text: txt, date: Date.now()
-                }).then(() => { document.getElementById('reviewText').value=""; showToast("Posted","success"); });
+                push(ref(db, `games/${currentGameId}/reviews`), reviewData)
+                .then(() => { document.getElementById('reviewText').value=""; showToast("Posted","success"); });
             }
         };
 
@@ -477,14 +480,32 @@
             document.getElementById('review-login-msg').style.display=currentUser?'none':'block';
         }
 
-        // --- PROFILE/UTILS ---
-        window.openEditProfileModal=()=>{if(!currentUser)return;document.getElementById('edit-profile-name').value=currentUser.displayName;document.getElementById('editProfileModal').style.display='flex';};
-        window.closeEditProfileModal=()=>document.getElementById('editProfileModal').style.display='none';
-        window.saveProfileChanges=async()=>{
-            const n=document.getElementById('edit-profile-name').value; const f=document.getElementById('edit-profile-file');
-            let p=currentUser.photoURL; if(f.files.length>0)p=await compressImage(f.files[0]);
-            updateProfile(currentUser,{displayName:n,photoURL:p}).then(()=>{update(ref(db,`users/${currentUser.uid}`),{name:n,photoURL:p}); showToast("Saved","success"); updateProfileDisplay(currentUser); closeEditProfileModal();});
+        // --- PROFILE EDIT (FIXED) ---
+        window.openEditProfileModal = () => {
+            if(!currentUser) return window.showAuthModal('login');
+            document.getElementById('edit-profile-name').value = currentUser.displayName;
+            document.getElementById('editProfileModal').style.display = 'flex';
         };
+
+        window.closeEditProfileModal = () => {
+            document.getElementById('editProfileModal').style.display = 'none';
+        };
+
+        window.saveProfileChanges = async () => {
+            const n = document.getElementById('edit-profile-name').value;
+            const f = document.getElementById('edit-profile-file');
+            let p = currentUser.photoURL;
+            
+            if(f.files.length > 0) p = await compressImage(f.files[0]);
+            
+            updateProfile(currentUser, {displayName: n, photoURL: p}).then(() => {
+                update(ref(db, `users/${currentUser.uid}`), {name: n, photoURL: p});
+                showToast("Saved", "success");
+                updateProfileDisplay({displayName: n, photoURL: p, email: currentUser.email});
+                window.closeEditProfileModal();
+            });
+        };
+
         function compressImage(f){return new Promise(r=>{const rd=new FileReader();rd.readAsDataURL(f);rd.onload=e=>{const i=new Image();i.src=e.target.result;i.onload=()=>{const c=document.createElement('canvas'),s=300/i.width;c.width=300;c.height=i.height*s;c.getContext('2d').drawImage(i,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',0.7))}}})}
 
         window.handleDownload=()=>{if(!currentGameId)return;runTransaction(ref(db,`games/${currentGameId}/downloadCount`),c=>(c||0)+1);if(currentUser)update(ref(db,`users/${currentUser.uid}/history`),{[currentGameId]:true});};
@@ -494,7 +515,7 @@
         window.closeAuthModal=()=>document.getElementById('authModal').style.display='none'; window.toggleAuthForm=(t)=>window.showAuthModal(t);
         window.closeModal=()=>{currentGameId=null;document.getElementById('gameModal').classList.remove('active');document.body.style.overflow='auto';};
         function showToast(m,t){const x=document.getElementById("toast");x.innerText=m;x.className="show "+t;setTimeout(()=>x.className="",3000);}
-        window.toggleSidebarView=(v)=>setView(v,document.querySelectorAll('.menu-item')[3]);
+        window.toggleSidebarView=(v)=>window.setView(v,document.querySelectorAll('.menu-item')[3]);
     </script>
 </body>
 </html>
