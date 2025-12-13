@@ -43,7 +43,6 @@
         .ps-info h1 { font-size: 24px; margin: 0; line-height: 1.2; font-weight: 500; }
         .ps-info p { color: var(--primary); font-size: 14px; font-weight: 500; margin: 5px 0 0 0; }
         
-        /* STATS BAR */
         .ps-stats-bar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 20px; margin-bottom: 20px; overflow-x: auto; }
         .ps-stat-item { text-align: center; padding: 0 15px; border-right: 1px solid #333; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 80px; }
         .ps-stat-item:last-child { border: none; }
@@ -51,12 +50,11 @@
         .ps-stat-label { font-size: 11px; color: #9aa0a6; }
         .age-box { border: 1px solid #fff; padding: 0 3px; font-size: 10px; border-radius: 2px; height: 16px; display: inline-flex; align-items: center; }
 
-        /* ACTION BUTTONS */
+        /* INSTALL AREA */
         .install-area { padding: 0 20px; margin-bottom: 30px; }
         .btn-install { width: 100%; background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 25px; font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
         .btn-install.downloading { background: #333; color: var(--text-muted); pointer-events: none; }
-        .btn-buy { background: #00875f; color: white; box-shadow: 0 4px 10px rgba(0, 135, 95, 0.4); } /* Darker green for buy */
-        
+        .btn-buy { background: #00875f; color: white; box-shadow: 0 4px 10px rgba(0, 135, 95, 0.4); }
         .progress-wrapper { height: 4px; background: #333; margin-top: 15px; border-radius: 2px; overflow: hidden; display: none; }
         .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.2s; }
 
@@ -64,7 +62,20 @@
         .sc-img { height: 200px; border-radius: 12px; object-fit: cover; background: #222; }
         .desc-box { padding: 0 20px; font-size: 14px; color: #ccc; line-height: 1.5; margin-bottom: 40px; }
 
-        /* NAVIGATION */
+        /* REVIEWS SECTION */
+        .reviews-container { padding: 0 20px; margin-bottom: 50px; }
+        .review-input-box { background: #2a2d36; padding: 15px; border-radius: 12px; margin-bottom: 20px; display: none; }
+        .review-input-box textarea { width: 100%; background: transparent; border: none; color: white; font-size: 14px; resize: none; min-height: 60px; border-bottom: 1px solid #444; margin-bottom: 10px; }
+        .btn-post { background: var(--primary); color: black; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; font-size: 12px; float: right; cursor: pointer; }
+        
+        .review-card { margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .r-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .r-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color:black; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:12px; }
+        .r-name { font-size: 13px; font-weight: bold; }
+        .r-date { font-size: 11px; color: #888; margin-left: auto; }
+        .r-body { font-size: 13px; color: #ddd; line-height: 1.4; }
+
+        /* BOTTOM NAV */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 60px; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 900; }
         .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: var(--text-muted); cursor: pointer; gap: 4px; }
         .nav-item i { font-size: 20px; }
@@ -75,8 +86,11 @@
         .auth-box { background: var(--surface); padding: 30px; border-radius: 15px; width: 320px; text-align: center; border: 1px solid var(--border); }
         .auth-input { width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: white; margin-bottom: 10px; border-radius: 5px; }
         .btn-auth { width: 100%; padding: 12px; background: var(--primary); border: none; border-radius: 5px; font-weight: bold; color: #000; cursor: pointer; }
+        
+        .toggle-link { font-size: 12px; color: #aaa; margin-top: 15px; cursor: pointer; }
+        .toggle-link span { color: var(--primary); font-weight: bold; }
 
-        /* PAYMENT STYLES */
+        /* PAYMENT SPECIFIC */
         .pay-options { display: flex; gap: 10px; margin-bottom: 20px; }
         .pay-opt { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; color: #aaa; background: #252830; }
         .pay-opt.active { border-color: var(--primary); color: white; background: #2f5346; }
@@ -135,42 +149,46 @@
         </div>
 
         <div class="install-area">
-            <!-- BUTTON CHANGES DYNAMICALLY -->
             <button id="btn-install" class="btn-install" onclick="window.handleInstallClick()">Install</button>
             <div class="progress-wrapper" id="progress-wrap"><div class="progress-fill" id="progress-bar"></div></div>
         </div>
 
         <div class="sc-scroll" id="d-gallery"></div>
         <div class="desc-box"><h3 style="color:white; margin-bottom:10px;">About this app</h3><p id="d-desc"></p></div>
+
+        <!-- REVIEWS SECTION -->
+        <div class="reviews-container">
+            <h3 style="color:white; margin-bottom:15px;">Ratings & Reviews</h3>
+            
+            <div id="review-input-box" class="review-input-box">
+                <textarea id="review-text" placeholder="Describe your experience (optional)"></textarea>
+                <button class="btn-post" onclick="window.postReview()">Post</button>
+                <div style="clear:both;"></div>
+            </div>
+            <div id="review-login-prompt" style="text-align:center; padding:20px; color:#888; background:#191b21; border-radius:10px; margin-bottom:20px;">
+                Please Sign In to write a review.
+            </div>
+
+            <div id="reviews-list"></div>
+        </div>
     </div>
 
     <!-- PAYMENT MODAL -->
     <div id="pay-modal" class="modal-overlay">
         <div class="auth-box">
             <h2 style="margin-top:0;">Payment Method</h2>
-            <p style="color:#aaa; font-size:13px; margin-bottom:15px;">Secure payment for <span id="pay-amount" style="color:white; font-weight:bold;"></span></p>
-            
+            <p style="color:#aaa; font-size:13px; margin-bottom:15px;">Amount: <span id="pay-amount" style="color:white; font-weight:bold;"></span></p>
             <div class="pay-options">
                 <div class="pay-opt active" id="opt-bank" onclick="window.switchPay('bank')"><i class="fas fa-credit-card"></i> Bank</div>
                 <div class="pay-opt" id="opt-ep" onclick="window.switchPay('ep')"><i class="fas fa-mobile-alt"></i> EasyPaisa</div>
             </div>
-
-            <!-- BANK FORM -->
             <div id="form-bank" class="pay-details-box">
-                <label class="pay-label">Card Number</label>
-                <input class="auth-input" placeholder="0000 0000 0000 0000">
-                <div style="display:flex; gap:10px;">
-                    <input class="auth-input" placeholder="MM/YY" style="flex:1">
-                    <input class="auth-input" placeholder="CVV" style="flex:1">
-                </div>
+                <label class="pay-label">Card Number</label> <input class="auth-input" placeholder="0000 0000 0000 0000">
+                <div style="display:flex; gap:10px;"><input class="auth-input" placeholder="MM/YY" style="flex:1"><input class="auth-input" placeholder="CVV" style="flex:1"></div>
             </div>
-
-            <!-- EASYPAISA FORM -->
             <div id="form-ep" class="pay-details-box" style="display:none;">
-                <label class="pay-label">Mobile Number</label>
-                <input class="auth-input" placeholder="03XX-XXXXXXX">
+                <label class="pay-label">Mobile Number</label> <input class="auth-input" placeholder="03XX-XXXXXXX">
             </div>
-
             <button class="btn-auth" id="pay-btn" onclick="window.processPayment()">Confirm Payment</button>
             <button onclick="document.getElementById('pay-modal').style.display='none'" style="background:none; border:none; color:#aaa; margin-top:10px;">Cancel</button>
         </div>
@@ -179,18 +197,26 @@
     <!-- AUTH MODAL -->
     <div id="auth-modal" class="modal-overlay">
         <div class="auth-box">
-            <h2 style="margin-top:0">Google Account</h2>
-            <input id="email" type="email" class="auth-input" placeholder="Email">
-            <input id="pass" type="password" class="auth-input" placeholder="Password">
-            <button class="btn-auth" onclick="window.doLogin()">Sign In</button>
+            <h2 id="auth-title" style="margin-top:0">Sign In</h2>
+            
+            <input id="auth-name" type="text" class="auth-input" placeholder="Full Name" style="display:none;">
+            <input id="auth-email" type="email" class="auth-input" placeholder="Email">
+            <input id="auth-pass" type="password" class="auth-input" placeholder="Password">
+            
+            <button class="btn-auth" id="auth-action-btn" onclick="window.handleAuth()">Sign In</button>
+            
+            <p class="toggle-link" onclick="window.toggleAuthMode()">
+                <span id="auth-toggle-text">Create account</span>
+            </p>
+            
             <button onclick="document.getElementById('auth-modal').style.display='none'" style="background:none; border:none; color:#aaa; margin-top:10px;">Cancel</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-        import { getDatabase, ref, onValue, runTransaction, update } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import { getDatabase, ref, onValue, runTransaction, update, push } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
         // CONFIG
         const firebaseConfig = {
@@ -209,26 +235,34 @@
 
         let allData = [], currentUser = null, userPurchases = {};
         let activeGame = null;
+        let isSignupMode = false;
 
         // AUTH & PURCHASES
         onAuthStateChanged(auth, u => {
             currentUser = u;
             const btn = document.getElementById('nav-profile');
+            const reviewBox = document.getElementById('review-input-box');
+            const reviewPrompt = document.getElementById('review-login-prompt');
+
             if(u) {
                 btn.style.background = "#00A173";
-                btn.innerHTML = `<img src="${u.photoURL || 'https://via.placeholder.com/50'}" onerror="this.src='https://via.placeholder.com/50'">`;
+                btn.innerHTML = u.photoURL ? `<img src="${u.photoURL}">` : u.displayName ? u.displayName.charAt(0).toUpperCase() : "U";
                 loadPurchases(u.uid);
+                reviewBox.style.display = "block";
+                reviewPrompt.style.display = "none";
             } else {
                 btn.style.background = "purple";
                 btn.innerHTML = '<i class="fas fa-user"></i>';
                 userPurchases = {};
+                reviewBox.style.display = "none";
+                reviewPrompt.style.display = "block";
             }
         });
 
         function loadPurchases(uid) {
             onValue(ref(db, `users/${uid}/purchases`), s => {
                 userPurchases = s.val() || {};
-                if(activeGame) updateInstallButton(activeGame); // Refresh button if detail open
+                if(activeGame) updateInstallButton(activeGame);
             });
         }
 
@@ -247,21 +281,10 @@
             list.forEach(game => {
                 const isPaid = game.priceType === 'Paid';
                 const priceText = isPaid ? game.price : "Free";
-                
                 const div = document.createElement('div');
                 div.className = 'app-item';
                 div.onclick = () => window.openDetail(game);
-                
-                div.innerHTML = `
-                    <img class="app-icon" src="${game.logo}" onerror="this.src='https://via.placeholder.com/60'">
-                    <div class="app-info">
-                        <div class="app-title">${game.name}</div>
-                        <div class="app-meta">
-                            <span>${game.category}</span>
-                            <span class="price-badge">${priceText}</span>
-                        </div>
-                    </div>
-                `;
+                div.innerHTML = `<img class="app-icon" src="${game.logo}"><div class="app-info"><div class="app-title">${game.name}</div><div class="app-meta"><span>${game.category}</span><span class="price-badge">${priceText}</span></div></div>`;
                 container.appendChild(div);
             });
         }
@@ -283,6 +306,7 @@
             shots.forEach(s => { gal.innerHTML += `<img src="${s}" class="sc-img">`; });
 
             updateInstallButton(game);
+            renderReviews(game.reviews);
             document.getElementById('app-detail-view').classList.add('active');
         };
 
@@ -297,7 +321,7 @@
 
             if (isPaid && !isOwned) {
                 btn.innerText = `Buy for ${game.price}`;
-                btn.classList.add('btn-buy'); // Style for buy
+                btn.classList.add('btn-buy'); 
                 btn.style.background = "#00875f";
             } else {
                 btn.innerText = "Install";
@@ -306,50 +330,133 @@
 
         window.closeDetail = () => document.getElementById('app-detail-view').classList.remove('active');
 
-        // --- PAYMENT & INSTALL LOGIC ---
-        window.handleInstallClick = () => {
-            if(!currentUser) return document.getElementById('auth-modal').style.display='flex';
+        // REVIEWS SYSTEM
+        function renderReviews(reviews) {
+            const list = document.getElementById('reviews-list');
+            list.innerHTML = "";
+            if(!reviews) { list.innerHTML = "<p style='color:#666; text-align:center;'>No reviews yet.</p>"; return; }
 
+            Object.values(reviews).reverse().forEach(r => {
+                const initial = r.name ? r.name.charAt(0).toUpperCase() : "U";
+                list.innerHTML += `
+                    <div class="review-card">
+                        <div class="r-header">
+                            <div class="r-avatar">${initial}</div>
+                            <div class="r-name">${r.name || 'User'}</div>
+                            <div class="r-date">${new Date(r.date).toLocaleDateString()}</div>
+                        </div>
+                        <div class="r-body">${r.text}</div>
+                    </div>
+                `;
+            });
+        }
+
+        window.postReview = () => {
+            if(!currentUser) return alert("Please Login first!");
+            const txt = document.getElementById('review-text').value;
+            if(!txt) return;
+
+            const reviewData = {
+                name: currentUser.displayName || "User",
+                uid: currentUser.uid,
+                text: txt,
+                date: Date.now()
+            };
+
+            push(ref(db, `games/${activeGame.id}/reviews`), reviewData).then(() => {
+                document.getElementById('review-text').value = "";
+                // Refresh logic will handle re-render via listener if set up, or basic manual
+                // For simplicity, we just clear input here. The UI will update next open or if we listen to 'games'
+            });
+        };
+
+        // AUTH LOGIC (LOGIN / SIGNUP TOGGLE)
+        window.checkProfile = () => {
+            if (currentUser) { if(confirm("Log out?")) signOut(auth); } 
+            else { 
+                isSignupMode = false; updateAuthUI();
+                document.getElementById('auth-modal').style.display = 'flex'; 
+            }
+        };
+
+        window.toggleAuthMode = () => {
+            isSignupMode = !isSignupMode;
+            updateAuthUI();
+        };
+
+        function updateAuthUI() {
+            const title = document.getElementById('auth-title');
+            const nameInput = document.getElementById('auth-name');
+            const btn = document.getElementById('auth-action-btn');
+            const toggleText = document.getElementById('auth-toggle-text');
+
+            if(isSignupMode) {
+                title.innerText = "Create Account";
+                nameInput.style.display = "block";
+                btn.innerText = "Sign Up";
+                toggleText.innerText = "Sign In";
+            } else {
+                title.innerText = "Sign In";
+                nameInput.style.display = "none";
+                btn.innerText = "Sign In";
+                toggleText.innerText = "Create account";
+            }
+        }
+
+        window.handleAuth = () => {
+            const e = document.getElementById('auth-email').value;
+            const p = document.getElementById('auth-pass').value;
+            const n = document.getElementById('auth-name').value;
+
+            if(isSignupMode) {
+                if(!n) return alert("Name is required");
+                createUserWithEmailAndPassword(auth, e, p).then((cred) => {
+                    updateProfile(cred.user, {displayName: n}).then(() => {
+                        document.getElementById('auth-modal').style.display = 'none';
+                    });
+                }).catch(err => alert(err.message));
+            } else {
+                signInWithEmailAndPassword(auth, e, p).then(() => {
+                    document.getElementById('auth-modal').style.display = 'none';
+                }).catch(err => alert(err.message));
+            }
+        };
+
+        // --- INSTALL & PAYMENT ---
+        window.handleInstallClick = () => {
+            if(!currentUser) { isSignupMode=false; updateAuthUI(); return document.getElementById('auth-modal').style.display='flex'; }
             const isPaid = activeGame.priceType === 'Paid';
             const isOwned = userPurchases[activeGame.id];
 
             if (isPaid && !isOwned) {
-                // OPEN PAYMENT MODAL
                 document.getElementById('pay-amount').innerText = activeGame.price;
                 document.getElementById('pay-modal').style.display = 'flex';
             } else {
-                // INSTALL DIRECTLY
                 window.startDownload();
             }
         };
 
-        // Payment UI Switcher
         window.switchPay = (method) => {
             document.querySelectorAll('.pay-opt').forEach(e => e.classList.remove('active'));
             document.getElementById('opt-'+method).classList.add('active');
-            
             document.getElementById('form-bank').style.display = method === 'bank' ? 'block' : 'none';
             document.getElementById('form-ep').style.display = method === 'ep' ? 'block' : 'none';
         };
 
-        // Process Payment Simulation
         window.processPayment = () => {
             const btn = document.getElementById('pay-btn');
             btn.innerHTML = `<span class="loader"></span> Processing...`;
-            
             setTimeout(() => {
-                // Success
                 update(ref(db, `users/${currentUser.uid}/purchases`), { [activeGame.id]: true });
                 document.getElementById('pay-modal').style.display = 'none';
-                btn.innerText = "Confirm Payment"; // Reset
-                window.startDownload(); // Auto start download
+                btn.innerText = "Confirm Payment"; 
+                window.startDownload();
             }, 2500);
         };
 
-        // Actual Download Animation + Link
         window.startDownload = () => {
             const link = activeGame.download;
-            if(link) window.open(link, '_blank'); // OPEN LINK
+            if(link) window.open(link, '_blank'); 
 
             const btn = document.getElementById('btn-install');
             const bar = document.getElementById('progress-bar');
@@ -365,23 +472,22 @@
                 if(w >= 100) {
                     w = 100;
                     clearInterval(int);
-                    btn.innerText = "Installing...";
-                    setTimeout(() => {
-                        btn.innerText = "Open";
-                        btn.classList.remove('downloading');
-                        btn.style.background = "#2f5346";
-                        wrap.style.display = 'none';
-                        runTransaction(ref(db, `games/${activeGame.id}/downloadCount`), c => (c || 0) + 1);
-                    }, 1000);
+                    btn.innerText = "Open";
+                    btn.classList.remove('downloading');
+                    btn.style.background = "#2f5346"; 
+                    wrap.style.display = 'none';
+                    runTransaction(ref(db, `games/${activeGame.id}/downloadCount`), c => (c || 0) + 1);
                 }
                 bar.style.width = w + "%";
             }, 300);
         };
 
         // UTILS
-        window.checkProfile = () => { if(currentUser){if(confirm("Logout?"))signOut(auth);}else document.getElementById('auth-modal').style.display='flex'; };
-        window.doLogin = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value).then(()=>document.getElementById('auth-modal').style.display='none').catch(e=>alert(e.message));
-        window.filterApps = () => renderApps(allData.filter(g=>g.name.toLowerCase().includes(document.getElementById('search').value.toLowerCase())));
+        window.doLogin = window.handleAuth; // alias
+        window.filterApps = () => {
+            const q = document.getElementById('search').value.toLowerCase();
+            renderApps(allData.filter(g => g.name.toLowerCase().includes(q)));
+        };
         window.setCategory = (cat, btn) => {
             document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
