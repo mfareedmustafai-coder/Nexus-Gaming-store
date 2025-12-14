@@ -55,7 +55,7 @@
         .btn-install { width: 100%; background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 25px; font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
         .btn-install.downloading { background: #333; color: var(--text-muted); pointer-events: none; }
         .btn-buy { background: #00875f !important; color: white !important; box-shadow: 0 4px 10px rgba(0, 135, 95, 0.4); }
-
+        
         .progress-wrapper { height: 4px; background: #333; margin-top: 15px; border-radius: 2px; overflow: hidden; display: none; }
         .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.2s; }
 
@@ -215,6 +215,19 @@
         </div>
     </div>
 
+    <!-- OPTIONS MODAL (NEW) -->
+    <div id="options-modal" class="modal-overlay">
+        <div class="auth-box">
+            <h2 style="margin-top:0; color:#00A173;">Manage App</h2>
+            <p style="color:#ccc; font-size:13px; margin-bottom:20px;">You already own this item.</p>
+            
+            <button class="btn-auth" style="background:#2f5346; color:#a8dbce; margin-bottom:10px;" onclick="window.startDownload()">Download (No Payment)</button>
+            <button class="btn-auth" style="background:#ff4757; color:white;" onclick="window.returnPayment()">Return Payment</button>
+            
+            <button onclick="document.getElementById('options-modal').style.display='none'" style="background:none; border:none; color:#aaa; margin-top:15px;">Cancel</button>
+        </div>
+    </div>
+
     <!-- AUTH MODAL -->
     <div id="auth-modal" class="modal-overlay">
         <div class="auth-box">
@@ -302,6 +315,8 @@
                 userPurchases = {};
                 reviewBox.style.display = "none";
                 reviewPrompt.style.display = "block";
+                
+                // If detail view is open, refresh button state
                 if(activeGame) updateInstallButton(activeGame);
             }
         });
@@ -357,27 +372,31 @@
             document.getElementById('app-detail-view').classList.add('active');
         };
 
+        // --- FIXED PAYMENT CHECK LOGIC ---
         function updateInstallButton(game) {
             const btn = document.getElementById('btn-install');
             const isPaid = game.priceType === 'Paid';
-            const isOwned = userPurchases[game.id];
+            // Important: Check if owned. If userPurchases[game.id] is true, they own it.
+            const isOwned = currentUser && userPurchases[game.id];
 
             btn.classList.remove('downloading', 'btn-buy');
             btn.style.background = "var(--primary)";
             document.getElementById('progress-wrap').style.display = 'none';
 
             if (isPaid && !isOwned) {
+                // If Paid AND User doesn't own it => SHOW BUY BUTTON
                 btn.innerText = `Buy for ${game.price}`;
                 btn.classList.add('btn-buy'); 
                 btn.style.background = "#00875f";
             } else {
+                // If Free OR User owns it => SHOW INSTALL BUTTON
                 btn.innerText = "Install";
             }
         }
 
         window.closeDetail = () => document.getElementById('app-detail-view').classList.remove('active');
 
-        // --- INSTALL / PAYMENT LOGIC (UPDATED) ---
+        // INSTALL CLICK HANDLER
         window.handleInstallClick = () => {
             
             // 1. GLOBAL LOGIN CHECK (First, check if user is logged in for any action)
@@ -402,8 +421,22 @@
                 document.getElementById('pay-amount').innerText = activeGame.price;
                 document.getElementById('pay-modal').style.display = 'flex';
             } else {
-                // Already Owned -> Download
-                window.startDownload();
+                // Already Owned -> Show Options Modal
+                document.getElementById('options-modal').style.display = 'flex';
+            }
+        };
+
+        // NEW: Return Payment Logic
+        window.returnPayment = () => {
+            if(confirm("Are you sure? You will lose access to this app and get a refund.")) {
+                remove(ref(db, `users/${currentUser.uid}/purchases/${activeGame.id}`))
+                .then(() => {
+                    // Update Local State Immediately
+                    delete userPurchases[activeGame.id];
+                    updateInstallButton(activeGame); // Reset button to "Buy"
+                    document.getElementById('options-modal').style.display = 'none';
+                    alert("Payment Returned (App Removed)");
+                });
             }
         };
 
@@ -420,16 +453,22 @@
             setTimeout(() => {
                 update(ref(db, `users/${currentUser.uid}/purchases`), { [activeGame.id]: true })
                 .then(() => {
+                    // Update Local UI instantly
                     userPurchases[activeGame.id] = true;
                     updateInstallButton(activeGame); 
+                    
                     document.getElementById('pay-modal').style.display = 'none';
                     btn.innerText = "Confirm Payment"; 
-                    window.startDownload();
+                    
+                    // Show Options Modal instead of auto-downloading
+                    document.getElementById('options-modal').style.display = 'flex';
                 });
             }, 2500);
         };
 
         window.startDownload = () => {
+            document.getElementById('options-modal').style.display = 'none'; // Close options if open
+            
             const link = activeGame.download;
             if(link) window.open(link, '_blank'); 
 
