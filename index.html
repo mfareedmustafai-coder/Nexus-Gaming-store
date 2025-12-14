@@ -30,8 +30,9 @@
         .app-icon { width: 100%; aspect-ratio: 1; border-radius: 20px; object-fit: cover; background: #333; box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 8px; }
         .app-title { font-size: 12px; font-weight: 500; margin-bottom: 2px; color: #ddd; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .app-meta { font-size: 10px; color: var(--text-muted); display: flex; justify-content: space-between; width: 100%; }
-        
-        /* APP DETAIL OVERLAY */
+        .price-badge { color: #81b7a7; font-weight: bold; }
+
+        /* DETAIL VIEW */
         #app-detail-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); padding-bottom: 20px; }
         #app-detail-view.active { transform: translateY(0); }
         .detail-nav { padding: 15px; display: flex; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 10; }
@@ -42,7 +43,6 @@
         .ps-info h1 { font-size: 24px; margin: 0; line-height: 1.2; font-weight: 500; }
         .ps-info p { color: var(--primary); font-size: 14px; font-weight: 500; margin: 5px 0 0 0; }
         
-        /* STATS BAR */
         .ps-stats-bar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 20px; margin-bottom: 20px; overflow-x: auto; }
         .ps-stat-item { text-align: center; padding: 0 15px; border-right: 1px solid #333; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 80px; }
         .ps-stat-item:last-child { border: none; }
@@ -54,7 +54,9 @@
         .install-area { padding: 0 20px; margin-bottom: 30px; }
         .btn-install { width: 100%; background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 25px; font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
         .btn-install.downloading { background: #333; color: var(--text-muted); pointer-events: none; }
-        .btn-buy { background: #00875f; color: white; box-shadow: 0 4px 10px rgba(0, 135, 95, 0.4); }
+        
+        /* THIS IS THE GREEN BUY BUTTON */
+        .btn-buy { background: #00875f !important; color: white !important; box-shadow: 0 4px 10px rgba(0, 135, 95, 0.4); }
         
         .progress-wrapper { height: 4px; background: #333; margin-top: 15px; border-radius: 2px; overflow: hidden; display: none; }
         .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.2s; }
@@ -63,12 +65,11 @@
         .sc-img { height: 200px; border-radius: 12px; object-fit: cover; background: #222; }
         .desc-box { padding: 0 20px; font-size: 14px; color: #ccc; line-height: 1.5; margin-bottom: 40px; }
 
-        /* REVIEWS */
+        /* REVIEWS SECTION */
         .reviews-container { padding: 0 20px; margin-bottom: 50px; }
         .review-input-box { background: #2a2d36; padding: 15px; border-radius: 12px; margin-bottom: 20px; display: none; }
         .review-input-box textarea { width: 100%; background: transparent; border: none; color: white; font-size: 14px; resize: none; min-height: 60px; border-bottom: 1px solid #444; margin-bottom: 10px; }
         .btn-post { background: var(--primary); color: black; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; font-size: 12px; float: right; cursor: pointer; }
-        
         .review-card { margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; }
         .r-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .r-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color:black; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:12px; }
@@ -90,7 +91,7 @@
         .toggle-link { font-size: 12px; color: #aaa; margin-top: 15px; cursor: pointer; }
         .toggle-link span { color: var(--primary); font-weight: bold; }
 
-        /* PAYMENT */
+        /* PAYMENT SPECIFIC */
         .pay-options { display: flex; gap: 10px; margin-bottom: 20px; }
         .pay-opt { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; color: #aaa; background: #252830; }
         .pay-opt.active { border-color: var(--primary); color: white; background: #2f5346; }
@@ -149,6 +150,7 @@
         </div>
 
         <div class="install-area">
+            <!-- BUTTON CHANGES DYNAMICALLY -->
             <button id="btn-install" class="btn-install" onclick="window.handleInstallClick()">Install</button>
             <div class="progress-wrapper" id="progress-wrap"><div class="progress-fill" id="progress-bar"></div></div>
         </div>
@@ -265,22 +267,24 @@
             if(u) {
                 btn.style.background = "#00A173";
                 btn.innerHTML = `<img src="${u.photoURL || 'https://via.placeholder.com/50'}" onerror="this.src='https://via.placeholder.com/50'">`;
-                loadPurchases(u.uid);
                 reviewBox.style.display = "block";
                 reviewPrompt.style.display = "none";
+                loadPurchases(u.uid);
             } else {
                 btn.style.background = "purple";
                 btn.innerHTML = '<i class="fas fa-user"></i>';
                 userPurchases = {};
                 reviewBox.style.display = "none";
                 reviewPrompt.style.display = "block";
+                // If detail view open, refresh button state
+                if(activeGame) updateInstallButton(activeGame);
             }
         });
 
         function loadPurchases(uid) {
             onValue(ref(db, `users/${uid}/purchases`), s => {
                 userPurchases = s.val() || {};
-                if(activeGame) updateInstallButton(activeGame);
+                if(activeGame) updateInstallButton(activeGame); // Crucial: Refresh UI when purchases load
             });
         }
 
@@ -324,7 +328,6 @@
             document.getElementById('d-title').innerText = game.name;
             document.getElementById('d-desc').innerText = game.desc;
             document.getElementById('d-icon').src = game.logo;
-            // Use Developer Name instead of "Nexus Official" if available
             document.getElementById('d-dev').innerText = game.developer || "Nexus Official";
             
             document.getElementById('d-size').innerText = game.size || "Varies";
@@ -342,6 +345,7 @@
             document.getElementById('app-detail-view').classList.add('active');
         };
 
+        // --- CORE PAYMENT LOGIC FIX ---
         function updateInstallButton(game) {
             const btn = document.getElementById('btn-install');
             const isPaid = game.priceType === 'Paid';
@@ -352,15 +356,89 @@
             document.getElementById('progress-wrap').style.display = 'none';
 
             if (isPaid && !isOwned) {
+                // User hasn't bought it yet
                 btn.innerText = `Buy for ${game.price}`;
                 btn.classList.add('btn-buy'); 
                 btn.style.background = "#00875f";
             } else {
+                // Free OR Already Bought
                 btn.innerText = "Install";
             }
         }
 
         window.closeDetail = () => document.getElementById('app-detail-view').classList.remove('active');
+
+        // INSTALL CLICK HANDLER
+        window.handleInstallClick = () => {
+            if(!currentUser) { isSignupMode=false; updateAuthUI(); return document.getElementById('auth-modal').style.display='flex'; }
+            
+            const isPaid = activeGame.priceType === 'Paid';
+            const isOwned = userPurchases[activeGame.id];
+
+            if (isPaid && !isOwned) {
+                document.getElementById('pay-amount').innerText = activeGame.price;
+                document.getElementById('pay-modal').style.display = 'flex';
+            } else {
+                window.startDownload();
+            }
+        };
+
+        window.switchPay = (method) => {
+            document.querySelectorAll('.pay-opt').forEach(e => e.classList.remove('active'));
+            document.getElementById('opt-'+method).classList.add('active');
+            document.getElementById('form-bank').style.display = method === 'bank' ? 'block' : 'none';
+            document.getElementById('form-ep').style.display = method === 'ep' ? 'block' : 'none';
+        };
+
+        window.processPayment = () => {
+            const btn = document.getElementById('pay-btn');
+            btn.innerHTML = `<span class="loader"></span> Processing...`;
+            
+            setTimeout(() => {
+                // Success - Update Database
+                update(ref(db, `users/${currentUser.uid}/purchases`), { [activeGame.id]: true })
+                .then(() => {
+                    // Update Local State Immediately
+                    userPurchases[activeGame.id] = true;
+                    updateInstallButton(activeGame); // Change button to Install
+                    document.getElementById('pay-modal').style.display = 'none';
+                    btn.innerText = "Confirm Payment"; 
+                    
+                    // Auto Start Download
+                    window.startDownload();
+                });
+            }, 2500);
+        };
+
+        window.startDownload = () => {
+            // 1. Trigger Download Link
+            const link = activeGame.download;
+            if(link) window.open(link, '_blank'); 
+
+            // 2. Show UI Animation
+            const btn = document.getElementById('btn-install');
+            const bar = document.getElementById('progress-bar');
+            const wrap = document.getElementById('progress-wrap');
+
+            btn.innerText = "Downloading...";
+            btn.classList.add('downloading');
+            wrap.style.display = 'block';
+            
+            let w = 0;
+            const int = setInterval(() => {
+                w += 10;
+                if(w >= 100) {
+                    w = 100;
+                    clearInterval(int);
+                    btn.innerText = "Open";
+                    btn.classList.remove('downloading');
+                    btn.style.background = "#2f5346"; 
+                    wrap.style.display = 'none';
+                    runTransaction(ref(db, `games/${activeGame.id}/downloadCount`), c => (c || 0) + 1);
+                }
+                bar.style.width = w + "%";
+            }, 300);
+        };
 
         // REVIEWS
         function renderReviews(reviews) {
@@ -419,7 +497,7 @@
             }
         };
 
-        window.deleteReview = (k) => { if(confirm("Delete review?")) remove(ref(db, `games/${activeGame.id}/reviews/${k}`)); };
+        window.deleteReview = (k) => { if(confirm("Delete?")) remove(ref(db, `games/${activeGame.id}/reviews/${k}`)); };
         window.editReview = (k, txt) => {
             editReviewId = k;
             document.getElementById('review-text').value = txt;
@@ -433,75 +511,10 @@
             document.getElementById('r-cancel-btn').style.display = "none";
         };
 
-        // INSTALL & PAY
-        window.handleInstallClick = () => {
-            if(!currentUser) { isSignupMode=false; updateAuthUI(); return document.getElementById('auth-modal').style.display='flex'; }
-            const isPaid = activeGame.priceType === 'Paid';
-            const isOwned = userPurchases[activeGame.id];
-
-            if (isPaid && !isOwned) {
-                document.getElementById('pay-amount').innerText = activeGame.price;
-                document.getElementById('pay-modal').style.display = 'flex';
-            } else {
-                window.startDownload();
-            }
-        };
-
-        window.switchPay = (method) => {
-            document.querySelectorAll('.pay-opt').forEach(e => e.classList.remove('active'));
-            document.getElementById('opt-'+method).classList.add('active');
-            document.getElementById('form-bank').style.display = method === 'bank' ? 'block' : 'none';
-            document.getElementById('form-ep').style.display = method === 'ep' ? 'block' : 'none';
-        };
-
-        window.processPayment = () => {
-            const btn = document.getElementById('pay-btn');
-            btn.innerHTML = `<span class="loader"></span> Processing...`;
-            setTimeout(() => {
-                update(ref(db, `users/${currentUser.uid}/purchases`), { [activeGame.id]: true });
-                document.getElementById('pay-modal').style.display = 'none';
-                btn.innerText = "Confirm Payment"; 
-                window.startDownload();
-            }, 2500);
-        };
-
-        window.startDownload = () => {
-            const link = activeGame.download;
-            if(link) window.open(link, '_blank'); 
-
-            const btn = document.getElementById('btn-install');
-            const bar = document.getElementById('progress-bar');
-            const wrap = document.getElementById('progress-wrap');
-
-            btn.innerText = "Downloading...";
-            btn.classList.add('downloading');
-            wrap.style.display = 'block';
-            
-            let w = 0;
-            const int = setInterval(() => {
-                w += 15;
-                if(w >= 100) {
-                    w = 100;
-                    clearInterval(int);
-                    btn.innerText = "Open";
-                    btn.classList.remove('downloading');
-                    btn.style.background = "#2f5346"; 
-                    wrap.style.display = 'none';
-                    runTransaction(ref(db, `games/${activeGame.id}/downloadCount`), c => (c || 0) + 1);
-                }
-                bar.style.width = w + "%";
-            }, 300);
-        };
-
         // AUTH & PROFILE
         window.checkProfile = () => {
-            if (currentUser) {
-                if(confirm("Profile Options:\nOK = Edit Profile\nCancel = Logout")) window.openEditProfileModal();
-                else signOut(auth);
-            } else { 
-                isSignupMode = false; updateAuthUI();
-                document.getElementById('auth-modal').style.display = 'flex'; 
-            }
+            if (currentUser) { if(confirm("Profile Options:\nOK = Edit Profile\nCancel = Logout")) window.openEditProfileModal(); else signOut(auth); } 
+            else { isSignupMode = false; updateAuthUI(); document.getElementById('auth-modal').style.display = 'flex'; }
         };
 
         window.toggleAuthMode = () => { isSignupMode = !isSignupMode; updateAuthUI(); };
@@ -510,11 +523,8 @@
             const nameInput = document.getElementById('auth-name');
             const btn = document.getElementById('auth-action-btn');
             const toggleText = document.getElementById('auth-toggle-text');
-            if(isSignupMode) {
-                title.innerText = "Create Account"; nameInput.style.display = "block"; btn.innerText = "Sign Up"; toggleText.innerText = "Sign In";
-            } else {
-                title.innerText = "Sign In"; nameInput.style.display = "none"; btn.innerText = "Sign In"; toggleText.innerText = "Create account";
-            }
+            if(isSignupMode) { title.innerText = "Create Account"; nameInput.style.display = "block"; btn.innerText = "Sign Up"; toggleText.innerText = "Sign In"; } 
+            else { title.innerText = "Sign In"; nameInput.style.display = "none"; btn.innerText = "Sign In"; toggleText.innerText = "Create account"; }
         }
 
         window.handleAuth = () => {
