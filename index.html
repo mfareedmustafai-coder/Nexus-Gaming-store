@@ -19,7 +19,7 @@
         .profile-btn { width: 35px; height: 35px; border-radius: 50%; background: purple; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; font-size: 18px; overflow: hidden; }
         .profile-btn img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* TABS */
+        /* CATEGORY TABS */
         .tabs { display: flex; gap: 10px; padding: 15px; overflow-x: auto; scrollbar-width: none; margin-top: 60px; }
         .tab { background: var(--surface); border: 1px solid var(--border); padding: 8px 16px; border-radius: 20px; white-space: nowrap; font-size: 14px; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
         .tab.active { background: #2f5346; color: #a8dbce; border-color: #2f5346; }
@@ -54,9 +54,7 @@
         .install-area { padding: 0 20px; margin-bottom: 30px; }
         .btn-install { width: 100%; background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 25px; font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
         .btn-install.downloading { background: #333; color: var(--text-muted); pointer-events: none; }
-        
-        /* THIS IS THE GREEN BUY BUTTON */
-        .btn-buy { background: #00875f !important; color: white !important; box-shadow: 0 4px 10px rgba(0, 135, 95, 0.4); }
+        .btn-buy { background: #00875f; color: white; box-shadow: 0 4px 10px rgba(0, 135, 95, 0.4); }
         
         .progress-wrapper { height: 4px; background: #333; margin-top: 15px; border-radius: 2px; overflow: hidden; display: none; }
         .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.2s; }
@@ -65,7 +63,7 @@
         .sc-img { height: 200px; border-radius: 12px; object-fit: cover; background: #222; }
         .desc-box { padding: 0 20px; font-size: 14px; color: #ccc; line-height: 1.5; margin-bottom: 40px; }
 
-        /* REVIEWS SECTION */
+        /* REVIEWS */
         .reviews-container { padding: 0 20px; margin-bottom: 50px; }
         .review-input-box { background: #2a2d36; padding: 15px; border-radius: 12px; margin-bottom: 20px; display: none; }
         .review-input-box textarea { width: 100%; background: transparent; border: none; color: white; font-size: 14px; resize: none; min-height: 60px; border-bottom: 1px solid #444; margin-bottom: 10px; }
@@ -91,7 +89,7 @@
         .toggle-link { font-size: 12px; color: #aaa; margin-top: 15px; cursor: pointer; }
         .toggle-link span { color: var(--primary); font-weight: bold; }
 
-        /* PAYMENT SPECIFIC */
+        /* PAYMENT */
         .pay-options { display: flex; gap: 10px; margin-bottom: 20px; }
         .pay-opt { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; color: #aaa; background: #252830; }
         .pay-opt.active { border-color: var(--primary); color: white; background: #2f5346; }
@@ -150,7 +148,6 @@
         </div>
 
         <div class="install-area">
-            <!-- BUTTON CHANGES DYNAMICALLY -->
             <button id="btn-install" class="btn-install" onclick="window.handleInstallClick()">Install</button>
             <div class="progress-wrapper" id="progress-wrap"><div class="progress-fill" id="progress-bar"></div></div>
         </div>
@@ -161,7 +158,6 @@
         <!-- REVIEWS SECTION -->
         <div class="reviews-container">
             <h3 style="color:white; margin-bottom:15px;">Ratings & Reviews</h3>
-            
             <div id="review-input-box" class="review-input-box">
                 <textarea id="review-text" placeholder="Describe your experience (optional)"></textarea>
                 <div style="overflow:hidden;">
@@ -169,10 +165,7 @@
                     <button class="btn-post" id="r-cancel-btn" style="background:transparent; margin-right:10px; display:none;" onclick="window.cancelEditReview()">Cancel</button>
                 </div>
             </div>
-            <div id="review-login-prompt" style="text-align:center; padding:20px; color:#888; background:#191b21; border-radius:10px; margin-bottom:20px;">
-                Please Sign In to write a review.
-            </div>
-
+            <div id="review-login-prompt" style="text-align:center; padding:20px; color:#888; background:#191b21; border-radius:10px; margin-bottom:20px;">Please Sign In to review.</div>
             <div id="reviews-list"></div>
         </div>
     </div>
@@ -237,7 +230,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
         import { getDatabase, ref, onValue, runTransaction, update, push, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-        // CONFIG
+        // --- PASTE YOUR FIREBASE CONFIG HERE ---
         const firebaseConfig = {
             apiKey: "AIzaSyCn1FBaxDwbvC28VWXAcq557uCidl-JHy0",
             authDomain: "app-store-6b5d4.firebaseapp.com",
@@ -276,7 +269,7 @@
                 userPurchases = {};
                 reviewBox.style.display = "none";
                 reviewPrompt.style.display = "block";
-                // If detail view open, refresh button state
+                // If detail view is open, refresh button state
                 if(activeGame) updateInstallButton(activeGame);
             }
         });
@@ -284,7 +277,7 @@
         function loadPurchases(uid) {
             onValue(ref(db, `users/${uid}/purchases`), s => {
                 userPurchases = s.val() || {};
-                if(activeGame) updateInstallButton(activeGame); // Crucial: Refresh UI when purchases load
+                if(activeGame) updateInstallButton(activeGame);
             });
         }
 
@@ -294,6 +287,8 @@
             if (data) {
                 allData = Object.entries(data).map(([k, v]) => ({...v, id: k})).reverse();
                 renderApps(allData);
+            } else {
+                document.getElementById('app-container').innerHTML = "<div style='text-align:center; padding:20px'>No content found.</div>";
             }
         });
 
@@ -345,7 +340,6 @@
             document.getElementById('app-detail-view').classList.add('active');
         };
 
-        // --- CORE PAYMENT LOGIC FIX ---
         function updateInstallButton(game) {
             const btn = document.getElementById('btn-install');
             const isPaid = game.priceType === 'Paid';
@@ -356,7 +350,7 @@
             document.getElementById('progress-wrap').style.display = 'none';
 
             if (isPaid && !isOwned) {
-                // User hasn't bought it yet
+                // Paid and NOT bought
                 btn.innerText = `Buy for ${game.price}`;
                 btn.classList.add('btn-buy'); 
                 btn.style.background = "#00875f";
@@ -393,29 +387,28 @@
         window.processPayment = () => {
             const btn = document.getElementById('pay-btn');
             btn.innerHTML = `<span class="loader"></span> Processing...`;
-            
             setTimeout(() => {
-                // Success - Update Database
                 update(ref(db, `users/${currentUser.uid}/purchases`), { [activeGame.id]: true })
                 .then(() => {
-                    // Update Local State Immediately
+                    // Force refresh button immediately
                     userPurchases[activeGame.id] = true;
-                    updateInstallButton(activeGame); // Change button to Install
+                    updateInstallButton(activeGame); 
+                    
                     document.getElementById('pay-modal').style.display = 'none';
                     btn.innerText = "Confirm Payment"; 
-                    
-                    // Auto Start Download
                     window.startDownload();
                 });
             }, 2500);
         };
 
         window.startDownload = () => {
-            // 1. Trigger Download Link
-            const link = activeGame.download;
-            if(link) window.open(link, '_blank'); 
+            // FIX: Ensure activeGame is set and has download link
+            if(!activeGame || !activeGame.download) { alert("Download link missing"); return; }
+            
+            // 1. OPEN LINK
+            window.open(activeGame.download, '_blank'); 
 
-            // 2. Show UI Animation
+            // 2. ANIMATION
             const btn = document.getElementById('btn-install');
             const bar = document.getElementById('progress-bar');
             const wrap = document.getElementById('progress-wrap');
@@ -511,7 +504,7 @@
             document.getElementById('r-cancel-btn').style.display = "none";
         };
 
-        // AUTH & PROFILE
+        // AUTH
         window.checkProfile = () => {
             if (currentUser) { if(confirm("Profile Options:\nOK = Edit Profile\nCancel = Logout")) window.openEditProfileModal(); else signOut(auth); } 
             else { isSignupMode = false; updateAuthUI(); document.getElementById('auth-modal').style.display = 'flex'; }
