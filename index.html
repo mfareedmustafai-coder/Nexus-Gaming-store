@@ -19,7 +19,7 @@
         .profile-btn { width: 35px; height: 35px; border-radius: 50%; background: purple; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; font-size: 18px; overflow: hidden; }
         .profile-btn img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* CATEGORY TABS */
+        /* TABS */
         .tabs { display: flex; gap: 10px; padding: 15px; overflow-x: auto; scrollbar-width: none; margin-top: 60px; }
         .tab { background: var(--surface); border: 1px solid var(--border); padding: 8px 16px; border-radius: 20px; white-space: nowrap; font-size: 14px; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
         .tab.active { background: #2f5346; color: #a8dbce; border-color: #2f5346; }
@@ -54,7 +54,7 @@
         .install-area { padding: 0 20px; margin-bottom: 30px; }
         .btn-install { width: 100%; background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 25px; font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
         .btn-install.downloading { background: #333; color: var(--text-muted); pointer-events: none; }
-        .btn-buy { background: #00875f; color: white; box-shadow: 0 4px 10px rgba(0, 135, 95, 0.4); }
+        .btn-buy { background: #00875f !important; color: white !important; box-shadow: 0 4px 10px rgba(0, 135, 95, 0.4); }
         
         .progress-wrapper { height: 4px; background: #333; margin-top: 15px; border-radius: 2px; overflow: hidden; display: none; }
         .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.2s; }
@@ -89,7 +89,7 @@
         .toggle-link { font-size: 12px; color: #aaa; margin-top: 15px; cursor: pointer; }
         .toggle-link span { color: var(--primary); font-weight: bold; }
 
-        /* PAYMENT */
+        /* PAYMENT & OPTIONS */
         .pay-options { display: flex; gap: 10px; margin-bottom: 20px; }
         .pay-opt { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; color: #aaa; background: #252830; }
         .pay-opt.active { border-color: var(--primary); color: white; background: #2f5346; }
@@ -98,6 +98,12 @@
         .loader { display: inline-block; width: 15px; height: 15px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-right: 5px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* PROFILE VIEW */
+        #view-profile { display: none; padding: 30px 20px; text-align: center; margin-top: 60px; }
+        .profile-pic-lg { width: 120px; height: 120px; border-radius: 50%; background: #333; margin: 0 auto; object-fit: cover; border: 3px solid var(--primary); position: relative; }
+        .cam-icon { position: absolute; bottom: 0; right: 0; background: #00A173; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
+        .btn-full { width: 100%; padding: 14px; background: #2a2d36; color: white; border: 1px solid #444; border-radius: 10px; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
+        .btn-logout { background: #ff4757; color: white; border: none; }
     </style>
 </head>
 <body>
@@ -107,28 +113,48 @@
         <div class="profile-btn" id="nav-profile" onclick="window.checkProfile()"><i class="fas fa-user"></i></div>
     </header>
 
-    <div class="tabs">
-        <div class="tab active" onclick="window.setCategory('All', this)">For you</div>
-        <div class="tab" onclick="window.setCategory('Top Charts', this)">Top Charts</div>
-        <div class="tab" onclick="window.setCategory('Action', this)">Action</div>
-        <div class="tab" onclick="window.setCategory('Racing', this)">Racing</div>
-        <div class="tab" onclick="window.setCategory('Tools', this)">Tools</div>
+    <div id="main-content-view">
+        <div class="tabs">
+            <div class="tab active" onclick="window.setCategory('All', this)">For you</div>
+            <div class="tab" onclick="window.setCategory('Top Charts', this)">Top Charts</div>
+            <div class="tab" onclick="window.setCategory('Action', this)">Action</div>
+            <div class="tab" onclick="window.setCategory('Racing', this)">Racing</div>
+            <div class="tab" onclick="window.setCategory('Tools', this)">Tools</div>
+        </div>
+        <div id="app-container" class="app-list" style="margin-top: 20px;">
+            <div style="text-align:center; margin-top:50px; color:#666;">Loading Store...</div>
+        </div>
     </div>
 
-    <div id="app-container" class="app-list" style="margin-top: 20px;">
-        <div style="text-align:center; margin-top:50px; color:#666;">Loading Store...</div>
+    <!-- PROFILE VIEW -->
+    <div id="view-profile">
+        <div style="position: relative; width: 120px; margin: 0 auto;">
+            <img id="p-img" src="https://via.placeholder.com/150" class="profile-pic-lg">
+            <div class="cam-icon" onclick="document.getElementById('edit-file').click()"><i class="fas fa-camera"></i></div>
+            <input type="file" id="edit-file" hidden accept="image/*">
+        </div>
+        <h2 class="p-name" id="p-name">Guest User</h2>
+        <p class="p-email" id="p-email">Not Logged In</p>
+        <div id="profile-actions" style="display:none;">
+            <button class="btn-full" onclick="window.openEditProfileModal()">Edit Profile</button>
+            <button class="btn-full btn-logout" onclick="window.logout()">Logout</button>
+        </div>
+        <div id="auth-actions">
+            <button class="btn-full" style="background:var(--primary); color:black;" onclick="window.showAuthModal('login')">Login</button>
+            <button class="btn-full" onclick="window.showAuthModal('signup')">Create Account</button>
+        </div>
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="window.setType('Game', this)"><i class="fas fa-gamepad"></i>Games</div>
-        <div class="nav-item" onclick="window.setType('App', this)"><i class="fas fa-layer-group"></i>Apps</div>
-        <div class="nav-item"><i class="fas fa-search"></i>Search</div>
+        <div class="nav-item active" onclick="window.switchTab('home', this)"><i class="fas fa-gamepad"></i>Games</div>
+        <div class="nav-item" onclick="window.switchTab('apps', this)"><i class="fas fa-layer-group"></i>Apps</div>
+        <div class="nav-item" onclick="window.switchTab('search', this)"><i class="fas fa-search"></i>Search</div>
+        <div class="nav-item" onclick="window.switchTab('profile', this)"><i class="fas fa-user"></i>Profile</div>
     </div>
 
     <!-- DETAIL VIEW -->
     <div id="app-detail-view">
         <div class="detail-nav"><i class="fas fa-arrow-left" style="font-size:20px; cursor:pointer;" onclick="window.closeDetail()"></i><i class="fas fa-search" style="font-size:20px;"></i></div>
-        
         <div class="ps-header">
             <div class="ps-title-row">
                 <img id="d-icon" class="ps-icon" src="">
@@ -138,7 +164,6 @@
                     <span style="font-size:12px; color:#aaa;">In-app purchases</span>
                 </div>
             </div>
-
             <div class="ps-stats-bar">
                 <div class="ps-stat-item"><div class="ps-stat-val">4.5 <i class="fas fa-star" style="font-size:10px"></i></div><div class="ps-stat-label">Reviews</div></div>
                 <div class="ps-stat-item"><div class="ps-stat-val" id="d-size">MB</div><div class="ps-stat-label">Size</div></div>
@@ -155,7 +180,6 @@
         <div class="sc-scroll" id="d-gallery"></div>
         <div class="desc-box"><h3 style="color:white; margin-bottom:10px;">About this app</h3><p id="d-desc"></p></div>
 
-        <!-- REVIEWS SECTION -->
         <div class="reviews-container">
             <h3 style="color:white; margin-bottom:15px;">Ratings & Reviews</h3>
             <div id="review-input-box" class="review-input-box">
@@ -191,6 +215,19 @@
         </div>
     </div>
 
+    <!-- OPTIONS MODAL (NEW) -->
+    <div id="options-modal" class="modal-overlay">
+        <div class="auth-box">
+            <h2 style="margin-top:0; color:#00A173;">Manage App</h2>
+            <p style="color:#ccc; font-size:13px; margin-bottom:20px;">You already own this item.</p>
+            
+            <button class="btn-auth" style="background:#2f5346; color:#a8dbce; margin-bottom:10px;" onclick="window.startDownload()">Download (No Payment)</button>
+            <button class="btn-auth" style="background:#ff4757; color:white;" onclick="window.returnPayment()">Return Payment</button>
+            
+            <button onclick="document.getElementById('options-modal').style.display='none'" style="background:none; border:none; color:#aaa; margin-top:15px;">Cancel</button>
+        </div>
+    </div>
+
     <!-- AUTH MODAL -->
     <div id="auth-modal" class="modal-overlay">
         <div class="auth-box">
@@ -210,15 +247,6 @@
     <div id="editModal" class="modal-overlay">
         <div class="auth-box">
             <h2 style="margin-top:0;">Edit Profile</h2>
-            <div style="margin:20px 0;">
-                <label for="edit-file" style="cursor:pointer; display:inline-block;">
-                    <div style="width:100px; height:100px; border-radius:50%; background:#222; margin:0 auto; display:flex; align-items:center; justify-content:center; border:2px dashed #666;">
-                        <i class="fas fa-camera" style="font-size:24px; color:#666;"></i>
-                    </div>
-                    <div style="font-size:12px; color:var(--primary); margin-top:10px;">Change Photo</div>
-                </label>
-                <input type="file" id="edit-file" hidden accept="image/*">
-            </div>
             <input type="text" id="edit-name" class="auth-input" placeholder="Display Name">
             <button class="btn-auth" onclick="window.saveProfile()">SAVE CHANGES</button>
             <button onclick="window.closeEditModal()" style="background:none; border:none; color:#aaa; margin-top:10px;">Cancel</button>
@@ -230,7 +258,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
         import { getDatabase, ref, onValue, runTransaction, update, push, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-        // --- PASTE YOUR FIREBASE CONFIG HERE ---
+        // CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyCn1FBaxDwbvC28VWXAcq557uCidl-JHy0",
             authDomain: "app-store-6b5d4.firebaseapp.com",
@@ -256,20 +284,31 @@
             const btn = document.getElementById('nav-profile');
             const reviewBox = document.getElementById('review-input-box');
             const reviewPrompt = document.getElementById('review-login-prompt');
+            const profileActions = document.getElementById('profile-actions');
+            const authActions = document.getElementById('auth-actions');
 
             if(u) {
                 btn.style.background = "#00A173";
                 btn.innerHTML = `<img src="${u.photoURL || 'https://via.placeholder.com/50'}" onerror="this.src='https://via.placeholder.com/50'">`;
+                document.getElementById('p-img').src = u.photoURL || 'https://via.placeholder.com/150';
+                document.getElementById('p-name').innerText = u.displayName || 'User';
+                document.getElementById('p-email').innerText = u.email;
+                profileActions.style.display = 'block';
+                authActions.style.display = 'none';
                 reviewBox.style.display = "block";
                 reviewPrompt.style.display = "none";
                 loadPurchases(u.uid);
             } else {
                 btn.style.background = "purple";
                 btn.innerHTML = '<i class="fas fa-user"></i>';
+                document.getElementById('p-img').src = 'https://via.placeholder.com/150';
+                document.getElementById('p-name').innerText = 'Guest User';
+                document.getElementById('p-email').innerText = 'Not Logged In';
+                profileActions.style.display = 'none';
+                authActions.style.display = 'block';
                 userPurchases = {};
                 reviewBox.style.display = "none";
                 reviewPrompt.style.display = "block";
-                // If detail view is open, refresh button state
                 if(activeGame) updateInstallButton(activeGame);
             }
         });
@@ -287,8 +326,6 @@
             if (data) {
                 allData = Object.entries(data).map(([k, v]) => ({...v, id: k})).reverse();
                 renderApps(allData);
-            } else {
-                document.getElementById('app-container').innerHTML = "<div style='text-align:center; padding:20px'>No content found.</div>";
             }
         });
 
@@ -298,43 +335,27 @@
             list.forEach(game => {
                 const isPaid = game.priceType === 'Paid';
                 const priceText = isPaid ? game.price : "Free";
-                
                 const div = document.createElement('div');
                 div.className = 'app-item';
                 div.onclick = () => window.openDetail(game);
-                
-                div.innerHTML = `
-                    <img class="app-icon" src="${game.logo}" onerror="this.src='https://via.placeholder.com/60'">
-                    <div class="app-info">
-                        <div class="app-title">${game.name}</div>
-                        <div class="app-meta">
-                            <span>${game.category}</span>
-                            <span class="price-badge" style="color:#81b7a7; font-weight:bold;">${priceText}</span>
-                        </div>
-                    </div>
-                `;
+                div.innerHTML = `<img class="app-icon" src="${game.logo}" onerror="this.src='https://via.placeholder.com/60'"><div class="app-info"><div class="app-title">${game.name}</div><div class="app-meta"><span>${game.category}</span><span class="price-badge" style="color:#81b7a7; font-weight:bold;">${priceText}</span></div></div>`;
                 container.appendChild(div);
             });
         }
 
-        // DETAIL VIEW
         window.openDetail = (game) => {
             activeGame = game;
             document.getElementById('d-title').innerText = game.name;
             document.getElementById('d-desc').innerText = game.desc;
             document.getElementById('d-icon').src = game.logo;
             document.getElementById('d-dev').innerText = game.developer || "Nexus Official";
-            
             document.getElementById('d-size').innerText = game.size || "Varies";
             document.getElementById('d-age').innerText = game.age || "3+";
             document.getElementById('d-downloads').innerText = (game.downloadCount || "0") + "+";
-
-            const gal = document.getElementById('d-gallery');
-            gal.innerHTML = "";
+            const gal = document.getElementById('d-gallery'); gal.innerHTML = "";
             let shots = game.screenshots || [];
             if(!Array.isArray(shots)) { shots = []; if(game.sc1) shots.push(game.sc1); }
             shots.forEach(s => { gal.innerHTML += `<img src="${s}" class="sc-img">`; });
-
             updateInstallButton(game);
             renderReviews(game.reviews);
             document.getElementById('app-detail-view').classList.add('active');
@@ -344,36 +365,47 @@
             const btn = document.getElementById('btn-install');
             const isPaid = game.priceType === 'Paid';
             const isOwned = userPurchases[game.id];
-
             btn.classList.remove('downloading', 'btn-buy');
             btn.style.background = "var(--primary)";
             document.getElementById('progress-wrap').style.display = 'none';
-
             if (isPaid && !isOwned) {
-                // Paid and NOT bought
                 btn.innerText = `Buy for ${game.price}`;
                 btn.classList.add('btn-buy'); 
                 btn.style.background = "#00875f";
             } else {
-                // Free OR Already Bought
                 btn.innerText = "Install";
             }
         }
 
         window.closeDetail = () => document.getElementById('app-detail-view').classList.remove('active');
 
-        // INSTALL CLICK HANDLER
+        // INSTALL / PAYMENT
         window.handleInstallClick = () => {
-            if(!currentUser) { isSignupMode=false; updateAuthUI(); return document.getElementById('auth-modal').style.display='flex'; }
-            
             const isPaid = activeGame.priceType === 'Paid';
             const isOwned = userPurchases[activeGame.id];
+
+            if(!isPaid) { window.startDownload(); return; }
+            if(!currentUser) { isSignupMode=false; updateAuthUI(); return document.getElementById('auth-modal').style.display='flex'; }
 
             if (isPaid && !isOwned) {
                 document.getElementById('pay-amount').innerText = activeGame.price;
                 document.getElementById('pay-modal').style.display = 'flex';
             } else {
-                window.startDownload();
+                // If Owned: Show Options
+                document.getElementById('options-modal').style.display = 'flex';
+            }
+        };
+
+        // NEW: Return Payment Logic
+        window.returnPayment = () => {
+            if(confirm("Are you sure? This will remove the app from your library.")) {
+                remove(ref(db, `users/${currentUser.uid}/purchases/${activeGame.id}`))
+                .then(() => {
+                    userPurchases[activeGame.id] = null; // Update local state
+                    updateInstallButton(activeGame); // Reset button to "Buy"
+                    document.getElementById('options-modal').style.display = 'none';
+                    alert("Payment Returned (App Removed)");
+                });
             }
         };
 
@@ -390,10 +422,8 @@
             setTimeout(() => {
                 update(ref(db, `users/${currentUser.uid}/purchases`), { [activeGame.id]: true })
                 .then(() => {
-                    // Force refresh button immediately
                     userPurchases[activeGame.id] = true;
                     updateInstallButton(activeGame); 
-                    
                     document.getElementById('pay-modal').style.display = 'none';
                     btn.innerText = "Confirm Payment"; 
                     window.startDownload();
@@ -402,24 +432,18 @@
         };
 
         window.startDownload = () => {
-            // FIX: Ensure activeGame is set and has download link
-            if(!activeGame || !activeGame.download) { alert("Download link missing"); return; }
-            
-            // 1. OPEN LINK
-            window.open(activeGame.download, '_blank'); 
-
-            // 2. ANIMATION
+            document.getElementById('options-modal').style.display = 'none'; // Close options if open
+            const link = activeGame.download;
+            if(link) window.open(link, '_blank'); 
             const btn = document.getElementById('btn-install');
             const bar = document.getElementById('progress-bar');
             const wrap = document.getElementById('progress-wrap');
-
             btn.innerText = "Downloading...";
             btn.classList.add('downloading');
             wrap.style.display = 'block';
-            
             let w = 0;
             const int = setInterval(() => {
-                w += 10;
+                w += 15;
                 if(w >= 100) {
                     w = 100;
                     clearInterval(int);
@@ -433,83 +457,32 @@
             }, 300);
         };
 
-        // REVIEWS
+        // REVIEWS & AUTH
         function renderReviews(reviews) {
             const list = document.getElementById('reviews-list');
             list.innerHTML = "";
             if(!reviews) { list.innerHTML = "<p style='color:#666; font-size:13px;'>No reviews yet.</p>"; return; }
-
             Object.entries(reviews).reverse().forEach(([key, r]) => {
                 const isMine = currentUser && r.uid === currentUser.uid;
                 const safeText = r.text.replace(/'/g, "\\'").replace(/"/g, "&quot;");
                 let menu = "";
-                
-                if(isMine) {
-                    menu = `<div style="margin-left:auto;">
-                            <i class="fas fa-edit r-menu-btn" style="color:#aaa; cursor:pointer; margin-right:10px;" onclick="window.editReview('${key}', '${safeText}')"></i>
-                            <i class="fas fa-trash r-menu-btn" style="color:#ff4757; cursor:pointer;" onclick="window.deleteReview('${key}')"></i>
-                        </div>`;
-                }
-
+                if(isMine) { menu = `<div style="margin-left:auto;"><i class="fas fa-edit r-menu-btn" style="color:#aaa; cursor:pointer; margin-right:10px;" onclick="window.editReview('${key}', '${safeText}')"></i><i class="fas fa-trash r-menu-btn" style="color:#ff4757; cursor:pointer;" onclick="window.deleteReview('${key}')"></i></div>`; }
                 const photo = r.photoURL ? `<img src="${r.photoURL}">` : r.name.charAt(0).toUpperCase();
-                list.innerHTML += `
-                    <div class="review-card">
-                        <div class="r-header">
-                            <div class="r-user">
-                                <div class="r-avatar">${photo}</div>
-                                <div>
-                                    <div style="font-weight:700; font-size:14px; color:white;">${r.name}</div>
-                                    <div style="font-size:11px; color:#666;">${new Date(r.date).toLocaleDateString()}</div>
-                                </div>
-                            </div>
-                            ${menu}
-                        </div>
-                        <div class="r-text">${r.text}</div>
-                    </div>
-                `;
+                list.innerHTML += `<div class="review-card"><div class="r-header"><div class="r-user"><div class="r-avatar">${photo}</div><div><div style="font-weight:700; font-size:14px; color:white;">${r.name}</div><div style="font-size:11px; color:#666;">${new Date(r.date).toLocaleDateString()}</div></div></div>${menu}</div><div class="r-text">${r.text}</div></div>`;
             });
         }
-
         window.postReview = () => {
             if(!currentUser) return alert("Please Login first!");
-            const txt = document.getElementById('review-text').value;
-            if(!txt) return;
-
-            const reviewData = {
-                name: currentUser.displayName || "User",
-                uid: currentUser.uid,
-                text: txt,
-                date: Date.now(),
-                photoURL: currentUser.photoURL || null
-            };
-
-            if(editReviewId) {
-                update(ref(db, `games/${activeGame.id}/reviews/${editReviewId}`), reviewData).then(() => window.cancelEditReview());
-            } else {
-                push(ref(db, `games/${activeGame.id}/reviews`), reviewData).then(() => document.getElementById('review-text').value = "");
-            }
+            const txt = document.getElementById('review-text').value; if(!txt) return;
+            const reviewData = { name: currentUser.displayName || "User", uid: currentUser.uid, text: txt, date: Date.now(), photoURL: currentUser.photoURL || null };
+            if(editReviewId) update(ref(db, `games/${activeGame.id}/reviews/${editReviewId}`), reviewData).then(() => window.cancelEditReview());
+            else push(ref(db, `games/${activeGame.id}/reviews`), reviewData).then(() => document.getElementById('review-text').value = "");
         };
-
         window.deleteReview = (k) => { if(confirm("Delete?")) remove(ref(db, `games/${activeGame.id}/reviews/${k}`)); };
-        window.editReview = (k, txt) => {
-            editReviewId = k;
-            document.getElementById('review-text').value = txt;
-            document.getElementById('r-post-btn').innerText = "Update";
-            document.getElementById('r-cancel-btn').style.display = "inline-block";
-        };
-        window.cancelEditReview = () => {
-            editReviewId = null;
-            document.getElementById('review-text').value = "";
-            document.getElementById('r-post-btn').innerText = "Post";
-            document.getElementById('r-cancel-btn').style.display = "none";
-        };
+        window.editReview = (k, txt) => { editReviewId = k; document.getElementById('review-text').value = txt; document.getElementById('r-post-btn').innerText = "Update"; document.getElementById('r-cancel-btn').style.display = "inline-block"; };
+        window.cancelEditReview = () => { editReviewId = null; document.getElementById('review-text').value = ""; document.getElementById('r-post-btn').innerText = "Post"; document.getElementById('r-cancel-btn').style.display = "none"; };
 
-        // AUTH
-        window.checkProfile = () => {
-            if (currentUser) { if(confirm("Profile Options:\nOK = Edit Profile\nCancel = Logout")) window.openEditProfileModal(); else signOut(auth); } 
-            else { isSignupMode = false; updateAuthUI(); document.getElementById('auth-modal').style.display = 'flex'; }
-        };
-
+        window.checkProfile = () => window.switchTab('profile', document.querySelectorAll('.nav-item')[3]);
         window.toggleAuthMode = () => { isSignupMode = !isSignupMode; updateAuthUI(); };
         function updateAuthUI() {
             const title = document.getElementById('auth-title');
@@ -519,12 +492,10 @@
             if(isSignupMode) { title.innerText = "Create Account"; nameInput.style.display = "block"; btn.innerText = "Sign Up"; toggleText.innerText = "Sign In"; } 
             else { title.innerText = "Sign In"; nameInput.style.display = "none"; btn.innerText = "Sign In"; toggleText.innerText = "Create account"; }
         }
-
         window.handleAuth = () => {
             const e = document.getElementById('auth-email').value;
             const p = document.getElementById('auth-pass').value;
             const n = document.getElementById('auth-name').value;
-
             if(isSignupMode) {
                 if(!n) return alert("Name required");
                 createUserWithEmailAndPassword(auth, e, p).then((cred) => {
@@ -534,10 +505,10 @@
                 signInWithEmailAndPassword(auth, e, p).then(() => document.getElementById('auth-modal').style.display = 'none').catch(err => alert(err.message));
             }
         };
+        window.logout = () => signOut(auth);
 
         window.openEditProfileModal = () => document.getElementById('editModal').style.display = 'flex';
         window.closeEditModal = () => document.getElementById('editModal').style.display = 'none';
-        
         window.saveProfile = async () => {
             const n = document.getElementById('edit-name').value;
             const f = document.getElementById('edit-file').files[0];
@@ -547,22 +518,19 @@
                 window.closeEditModal(); alert("Profile Updated");
             });
         };
-
         const compress = (f) => new Promise(r => { const rd=new FileReader(); rd.readAsDataURL(f); rd.onload=e=>{ const i=new Image(); i.src=e.target.result; i.onload=()=>{ const c=document.createElement('canvas'),s=300/i.width; c.width=300; c.height=i.height*s; c.getContext('2d').drawImage(i,0,0,c.width,c.height); r(c.toDataURL('image/jpeg',0.7))}}});
 
-        window.filterApps = () => {
-            const q = document.getElementById('search').value.toLowerCase();
-            renderApps(allData.filter(g => g.name.toLowerCase().includes(q)));
-        };
-        window.setCategory = (cat, btn) => {
-            document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderApps(allData.filter(g => cat === 'All' || g.category === cat));
-        };
-        window.setType = (type, btn) => {
+        window.filterApps = () => { const q = document.getElementById('search').value.toLowerCase(); renderApps(allData.filter(g => g.name.toLowerCase().includes(q))); };
+        window.setCategory = (cat, btn) => { document.querySelectorAll('.tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderApps(allData.filter(g => cat === 'All' || g.category === cat)); };
+        window.setType = (type, btn) => { document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderApps(allData.filter(g => (g.type || 'Game') === type)); };
+        
+        window.switchTab = (tab, btn) => {
+            document.getElementById('main-content-view').style.display = (tab === 'profile') ? 'none' : 'block';
+            document.getElementById('view-profile').style.display = (tab === 'profile') ? 'block' : 'none';
             document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            renderApps(allData.filter(g => (g.type || 'Game') === type));
+            if(tab === 'apps') window.setType('App', btn);
+            if(tab === 'home') window.setType('Game', btn); 
         };
     </script>
 </body>
