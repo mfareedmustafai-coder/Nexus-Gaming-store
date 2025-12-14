@@ -55,7 +55,7 @@
         .btn-install { width: 100%; background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 25px; font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
         .btn-install.downloading { background: #333; color: var(--text-muted); pointer-events: none; }
         .btn-buy { background: #00875f !important; color: white !important; box-shadow: 0 4px 10px rgba(0, 135, 95, 0.4); }
-        
+
         .progress-wrapper { height: 4px; background: #333; margin-top: 15px; border-radius: 2px; overflow: hidden; display: none; }
         .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.2s; }
 
@@ -89,7 +89,7 @@
         .toggle-link { font-size: 12px; color: #aaa; margin-top: 15px; cursor: pointer; }
         .toggle-link span { color: var(--primary); font-weight: bold; }
 
-        /* PAYMENT & OPTIONS */
+        /* PAYMENT SPECIFIC */
         .pay-options { display: flex; gap: 10px; margin-bottom: 20px; }
         .pay-opt { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; color: #aaa; background: #252830; }
         .pay-opt.active { border-color: var(--primary); color: white; background: #2f5346; }
@@ -215,19 +215,6 @@
         </div>
     </div>
 
-    <!-- OPTIONS MODAL (NEW) -->
-    <div id="options-modal" class="modal-overlay">
-        <div class="auth-box">
-            <h2 style="margin-top:0; color:#00A173;">Manage App</h2>
-            <p style="color:#ccc; font-size:13px; margin-bottom:20px;">You already own this item.</p>
-            
-            <button class="btn-auth" style="background:#2f5346; color:#a8dbce; margin-bottom:10px;" onclick="window.startDownload()">Download (No Payment)</button>
-            <button class="btn-auth" style="background:#ff4757; color:white;" onclick="window.returnPayment()">Return Payment</button>
-            
-            <button onclick="document.getElementById('options-modal').style.display='none'" style="background:none; border:none; color:#aaa; margin-top:15px;">Cancel</button>
-        </div>
-    </div>
-
     <!-- AUTH MODAL -->
     <div id="auth-modal" class="modal-overlay">
         <div class="auth-box">
@@ -288,24 +275,30 @@
             const authActions = document.getElementById('auth-actions');
 
             if(u) {
+                // LOGGED IN
                 btn.style.background = "#00A173";
                 btn.innerHTML = `<img src="${u.photoURL || 'https://via.placeholder.com/50'}" onerror="this.src='https://via.placeholder.com/50'">`;
+                
                 document.getElementById('p-img').src = u.photoURL || 'https://via.placeholder.com/150';
                 document.getElementById('p-name').innerText = u.displayName || 'User';
                 document.getElementById('p-email').innerText = u.email;
                 profileActions.style.display = 'block';
                 authActions.style.display = 'none';
+
                 reviewBox.style.display = "block";
                 reviewPrompt.style.display = "none";
                 loadPurchases(u.uid);
             } else {
+                // LOGGED OUT
                 btn.style.background = "purple";
                 btn.innerHTML = '<i class="fas fa-user"></i>';
+                
                 document.getElementById('p-img').src = 'https://via.placeholder.com/150';
                 document.getElementById('p-name').innerText = 'Guest User';
                 document.getElementById('p-email').innerText = 'Not Logged In';
                 profileActions.style.display = 'none';
                 authActions.style.display = 'block';
+
                 userPurchases = {};
                 reviewBox.style.display = "none";
                 reviewPrompt.style.display = "block";
@@ -352,10 +345,13 @@
             document.getElementById('d-size').innerText = game.size || "Varies";
             document.getElementById('d-age').innerText = game.age || "3+";
             document.getElementById('d-downloads').innerText = (game.downloadCount || "0") + "+";
-            const gal = document.getElementById('d-gallery'); gal.innerHTML = "";
+
+            const gal = document.getElementById('d-gallery');
+            gal.innerHTML = "";
             let shots = game.screenshots || [];
             if(!Array.isArray(shots)) { shots = []; if(game.sc1) shots.push(game.sc1); }
             shots.forEach(s => { gal.innerHTML += `<img src="${s}" class="sc-img">`; });
+
             updateInstallButton(game);
             renderReviews(game.reviews);
             document.getElementById('app-detail-view').classList.add('active');
@@ -365,9 +361,11 @@
             const btn = document.getElementById('btn-install');
             const isPaid = game.priceType === 'Paid';
             const isOwned = userPurchases[game.id];
+
             btn.classList.remove('downloading', 'btn-buy');
             btn.style.background = "var(--primary)";
             document.getElementById('progress-wrap').style.display = 'none';
+
             if (isPaid && !isOwned) {
                 btn.innerText = `Buy for ${game.price}`;
                 btn.classList.add('btn-buy'); 
@@ -379,33 +377,33 @@
 
         window.closeDetail = () => document.getElementById('app-detail-view').classList.remove('active');
 
-        // INSTALL / PAYMENT
+        // --- INSTALL / PAYMENT LOGIC (UPDATED) ---
         window.handleInstallClick = () => {
+            
+            // 1. GLOBAL LOGIN CHECK (First, check if user is logged in for any action)
+            if(!currentUser) { 
+                isSignupMode = false; updateAuthUI(); 
+                document.getElementById('auth-modal').style.display='flex'; 
+                return; 
+            }
+
             const isPaid = activeGame.priceType === 'Paid';
             const isOwned = userPurchases[activeGame.id];
 
-            if(!isPaid) { window.startDownload(); return; }
-            if(!currentUser) { isSignupMode=false; updateAuthUI(); return document.getElementById('auth-modal').style.display='flex'; }
+            // 2. IF FREE -> Download Directly (User is already logged in)
+            if (!isPaid) {
+                window.startDownload();
+                return;
+            }
 
-            if (isPaid && !isOwned) {
+            // 3. IF PAID -> Check Ownership
+            if (!isOwned) {
+                // Not Owned -> Show Payment Modal
                 document.getElementById('pay-amount').innerText = activeGame.price;
                 document.getElementById('pay-modal').style.display = 'flex';
             } else {
-                // If Owned: Show Options
-                document.getElementById('options-modal').style.display = 'flex';
-            }
-        };
-
-        // NEW: Return Payment Logic
-        window.returnPayment = () => {
-            if(confirm("Are you sure? This will remove the app from your library.")) {
-                remove(ref(db, `users/${currentUser.uid}/purchases/${activeGame.id}`))
-                .then(() => {
-                    userPurchases[activeGame.id] = null; // Update local state
-                    updateInstallButton(activeGame); // Reset button to "Buy"
-                    document.getElementById('options-modal').style.display = 'none';
-                    alert("Payment Returned (App Removed)");
-                });
+                // Already Owned -> Download
+                window.startDownload();
             }
         };
 
@@ -432,15 +430,17 @@
         };
 
         window.startDownload = () => {
-            document.getElementById('options-modal').style.display = 'none'; // Close options if open
             const link = activeGame.download;
             if(link) window.open(link, '_blank'); 
+
             const btn = document.getElementById('btn-install');
             const bar = document.getElementById('progress-bar');
             const wrap = document.getElementById('progress-wrap');
+
             btn.innerText = "Downloading...";
             btn.classList.add('downloading');
             wrap.style.display = 'block';
+            
             let w = 0;
             const int = setInterval(() => {
                 w += 15;
@@ -457,7 +457,7 @@
             }, 300);
         };
 
-        // REVIEWS & AUTH
+        // REVIEWS & AUTH (SAME AS BEFORE)
         function renderReviews(reviews) {
             const list = document.getElementById('reviews-list');
             list.innerHTML = "";
@@ -466,7 +466,9 @@
                 const isMine = currentUser && r.uid === currentUser.uid;
                 const safeText = r.text.replace(/'/g, "\\'").replace(/"/g, "&quot;");
                 let menu = "";
-                if(isMine) { menu = `<div style="margin-left:auto;"><i class="fas fa-edit r-menu-btn" style="color:#aaa; cursor:pointer; margin-right:10px;" onclick="window.editReview('${key}', '${safeText}')"></i><i class="fas fa-trash r-menu-btn" style="color:#ff4757; cursor:pointer;" onclick="window.deleteReview('${key}')"></i></div>`; }
+                if(isMine) {
+                    menu = `<div style="margin-left:auto;"><i class="fas fa-edit r-menu-btn" style="color:#aaa; cursor:pointer; margin-right:10px;" onclick="window.editReview('${key}', '${safeText}')"></i><i class="fas fa-trash r-menu-btn" style="color:#ff4757; cursor:pointer;" onclick="window.deleteReview('${key}')"></i></div>`;
+                }
                 const photo = r.photoURL ? `<img src="${r.photoURL}">` : r.name.charAt(0).toUpperCase();
                 list.innerHTML += `<div class="review-card"><div class="r-header"><div class="r-user"><div class="r-avatar">${photo}</div><div><div style="font-weight:700; font-size:14px; color:white;">${r.name}</div><div style="font-size:11px; color:#666;">${new Date(r.date).toLocaleDateString()}</div></div></div>${menu}</div><div class="r-text">${r.text}</div></div>`;
             });
