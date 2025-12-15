@@ -316,7 +316,6 @@
                 reviewBox.style.display = "none";
                 reviewPrompt.style.display = "block";
                 
-                // If detail view is open, refresh button state
                 if(activeGame) updateInstallButton(activeGame);
             }
         });
@@ -334,6 +333,14 @@
             if (data) {
                 allData = Object.entries(data).map(([k, v]) => ({...v, id: k})).reverse();
                 renderApps(allData);
+                // REFRESH IF OPEN
+                if(activeGame && document.getElementById('app-detail-view').classList.contains('active')) {
+                     const updatedGame = allData.find(g => g.id === activeGame.id);
+                     if(updatedGame) {
+                         activeGame = updatedGame;
+                         renderReviews(updatedGame.reviews); // Auto refresh comments
+                     }
+                }
             }
         });
 
@@ -372,68 +379,54 @@
             document.getElementById('app-detail-view').classList.add('active');
         };
 
-        // --- FIXED PAYMENT CHECK LOGIC ---
         function updateInstallButton(game) {
             const btn = document.getElementById('btn-install');
             const isPaid = game.priceType === 'Paid';
-            // Important: Check if owned. If userPurchases[game.id] is true, they own it.
-            const isOwned = currentUser && userPurchases[game.id];
+            const isOwned = userPurchases[game.id];
 
             btn.classList.remove('downloading', 'btn-buy');
             btn.style.background = "var(--primary)";
             document.getElementById('progress-wrap').style.display = 'none';
 
             if (isPaid && !isOwned) {
-                // If Paid AND User doesn't own it => SHOW BUY BUTTON
                 btn.innerText = `Buy for ${game.price}`;
                 btn.classList.add('btn-buy'); 
                 btn.style.background = "#00875f";
             } else {
-                // If Free OR User owns it => SHOW INSTALL BUTTON
                 btn.innerText = "Install";
             }
         }
 
         window.closeDetail = () => document.getElementById('app-detail-view').classList.remove('active');
 
-        // INSTALL CLICK HANDLER
+        // INSTALL / PAYMENT
         window.handleInstallClick = () => {
+            if(!currentUser) { isSignupMode=false; updateAuthUI(); return document.getElementById('auth-modal').style.display='flex'; }
             
-            // 1. GLOBAL LOGIN CHECK (First, check if user is logged in for any action)
-            if(!currentUser) { 
-                isSignupMode = false; updateAuthUI(); 
-                document.getElementById('auth-modal').style.display='flex'; 
-                return; 
-            }
-
             const isPaid = activeGame.priceType === 'Paid';
             const isOwned = userPurchases[activeGame.id];
 
-            // 2. IF FREE -> Download Directly (User is already logged in)
-            if (!isPaid) {
-                window.startDownload();
-                return;
-            }
-
-            // 3. IF PAID -> Check Ownership
-            if (!isOwned) {
-                // Not Owned -> Show Payment Modal
+            if (isPaid && !isOwned) {
                 document.getElementById('pay-amount').innerText = activeGame.price;
                 document.getElementById('pay-modal').style.display = 'flex';
             } else {
-                // Already Owned -> Show Options Modal
-                document.getElementById('options-modal').style.display = 'flex';
+                // If Free OR Owned -> Direct logic
+                // NEW: If Owned (Paid), show options
+                if (isPaid && isOwned) {
+                    document.getElementById('options-modal').style.display = 'flex';
+                } else {
+                    window.startDownload(); // Free App logic
+                }
             }
         };
-
-        // NEW: Return Payment Logic
+        
+        // Return Payment
         window.returnPayment = () => {
             if(confirm("Are you sure? You will lose access to this app and get a refund.")) {
                 remove(ref(db, `users/${currentUser.uid}/purchases/${activeGame.id}`))
                 .then(() => {
-                    // Update Local State Immediately
                     delete userPurchases[activeGame.id];
-                    updateInstallButton(activeGame); // Reset button to "Buy"
+                    updateInstallButton(activeGame);
                     document.getElementById('options-modal').style.display = 'none';
                     alert("Payment Returned (App Removed)");
                 });
@@ -453,22 +446,17 @@
             setTimeout(() => {
                 update(ref(db, `users/${currentUser.uid}/purchases`), { [activeGame.id]: true })
                 .then(() => {
-                    // Update Local UI instantly
                     userPurchases[activeGame.id] = true;
                     updateInstallButton(activeGame); 
-                    
                     document.getElementById('pay-modal').style.display = 'none';
                     btn.innerText = "Confirm Payment"; 
-                    
-                    // Show Options Modal instead of auto-downloading
-                    document.getElementById('options-modal').style.display = 'flex';
+                    window.startDownload();
                 });
             }, 2500);
         };
 
         window.startDownload = () => {
-            document.getElementById('options-modal').style.display = 'none'; // Close options if open
-            
+            document.getElementById('options-modal').style.display = 'none';
             const link = activeGame.download;
             if(link) window.open(link, '_blank'); 
 
@@ -496,7 +484,7 @@
             }, 300);
         };
 
-        // REVIEWS & AUTH (SAME AS BEFORE)
+        // REVIEWS & AUTH (FIXED FUNCTION NAME)
         function renderReviews(reviews) {
             const list = document.getElementById('reviews-list');
             list.innerHTML = "";
@@ -512,13 +500,20 @@
                 list.innerHTML += `<div class="review-card"><div class="r-header"><div class="r-user"><div class="r-avatar">${photo}</div><div><div style="font-weight:700; font-size:14px; color:white;">${r.name}</div><div style="font-size:11px; color:#666;">${new Date(r.date).toLocaleDateString()}</div></div></div>${menu}</div><div class="r-text">${r.text}</div></div>`;
             });
         }
-        window.postReview = () => {
+        
+        // RENAMED postReview -> submitReview to match HTML
+        window.submitReview = () => {
             if(!currentUser) return alert("Please Login first!");
             const txt = document.getElementById('review-text').value; if(!txt) return;
             const reviewData = { name: currentUser.displayName || "User", uid: currentUser.uid, text: txt, date: Date.now(), photoURL: currentUser.photoURL || null };
-            if(editReviewId) update(ref(db, `games/${activeGame.id}/reviews/${editReviewId}`), reviewData).then(() => window.cancelEditReview());
-            else push(ref(db, `games/${activeGame.id}/reviews`), reviewData).then(() => document.getElementById('review-text').value = "");
+            
+            if(editReviewId) {
+                update(ref(db, `games/${activeGame.id}/reviews/${editReviewId}`), reviewData).then(() => window.cancelEditReview());
+            } else {
+                push(ref(db, `games/${activeGame.id}/reviews`), reviewData).then(() => document.getElementById('review-text').value = "");
+            }
         };
+
         window.deleteReview = (k) => { if(confirm("Delete?")) remove(ref(db, `games/${activeGame.id}/reviews/${k}`)); };
         window.editReview = (k, txt) => { editReviewId = k; document.getElementById('review-text').value = txt; document.getElementById('r-post-btn').innerText = "Update"; document.getElementById('r-cancel-btn').style.display = "inline-block"; };
         window.cancelEditReview = () => { editReviewId = null; document.getElementById('review-text').value = ""; document.getElementById('r-post-btn').innerText = "Post"; document.getElementById('r-cancel-btn').style.display = "none"; };
