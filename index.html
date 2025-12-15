@@ -66,14 +66,33 @@
         /* REVIEWS */
         .reviews-container { padding: 0 20px; margin-bottom: 50px; }
         .review-input-box { background: #2a2d36; padding: 15px; border-radius: 12px; margin-bottom: 20px; display: none; }
+        
+        /* NEW: STAR RATING INPUT STYLE */
+        .star-input-container { display: flex; gap: 5px; margin-bottom: 10px; }
+        .rate-star { color: #555; font-size: 18px; cursor: pointer; transition: 0.2s; }
+        .rate-star.filled { color: #fbbf24; }
+
         .review-input-box textarea { width: 100%; background: transparent; border: none; color: white; font-size: 14px; resize: none; min-height: 60px; border-bottom: 1px solid #444; margin-bottom: 10px; }
         .btn-post { background: var(--primary); color: black; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; font-size: 12px; float: right; cursor: pointer; }
+        
         .review-card { margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; }
         .r-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .r-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color:black; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:12px; }
         .r-name { font-size: 13px; font-weight: bold; }
         .r-date { font-size: 11px; color: #888; margin-left: auto; }
         .r-body { font-size: 13px; color: #ddd; line-height: 1.4; }
+        .r-rating-display { font-size: 10px; color: #fbbf24; display: block; margin-top: 2px; }
+
+        /* THREE DOTS MENU */
+        .review-menu-container { position: relative; }
+        .review-dots { color: #888; cursor: pointer; font-size: 16px; padding: 5px; transition: 0.2s; }
+        .review-dots:hover { color: white; }
+        .review-dropdown { display: none; position: absolute; right: 0; top: 25px; background: #252830; border: 1px solid #444; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.6); z-index: 100; width: 130px; overflow: hidden; }
+        .review-dropdown.show { display: block; }
+        .review-dropdown div { padding: 10px 15px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #ccc; transition: 0.2s; }
+        .review-dropdown div:hover { background: #333; color: white; }
+        .review-dropdown div.delete-opt { color: var(--danger); border-top: 1px solid #333; }
+        .review-dropdown div.delete-opt:hover { background: rgba(255, 71, 87, 0.1); }
 
         /* BOTTOM NAV */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 60px; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 900; }
@@ -89,7 +108,7 @@
         .toggle-link { font-size: 12px; color: #aaa; margin-top: 15px; cursor: pointer; }
         .toggle-link span { color: var(--primary); font-weight: bold; }
 
-        /* PAYMENT SPECIFIC */
+        /* PAYMENT */
         .pay-options { display: flex; gap: 10px; margin-bottom: 20px; }
         .pay-opt { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; color: #aaa; background: #252830; }
         .pay-opt.active { border-color: var(--primary); color: white; background: #2f5346; }
@@ -104,6 +123,7 @@
         .cam-icon { position: absolute; bottom: 0; right: 0; background: #00A173; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
         .btn-full { width: 100%; padding: 14px; background: #2a2d36; color: white; border: 1px solid #444; border-radius: 10px; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
         .btn-logout { background: #ff4757; color: white; border: none; }
+
     </style>
 </head>
 <body>
@@ -183,6 +203,14 @@
         <div class="reviews-container">
             <h3 style="color:white; margin-bottom:15px;">Ratings & Reviews</h3>
             <div id="review-input-box" class="review-input-box">
+                <!-- STAR RATING INPUT -->
+                <div class="star-input-container">
+                    <i class="fas fa-star rate-star" onclick="window.setRating(1)"></i>
+                    <i class="fas fa-star rate-star" onclick="window.setRating(2)"></i>
+                    <i class="fas fa-star rate-star" onclick="window.setRating(3)"></i>
+                    <i class="fas fa-star rate-star" onclick="window.setRating(4)"></i>
+                    <i class="fas fa-star rate-star" onclick="window.setRating(5)"></i>
+                </div>
                 <textarea id="review-text" placeholder="Describe your experience (optional)"></textarea>
                 <div style="overflow:hidden;">
                     <button class="btn-post" id="r-post-btn" onclick="window.submitReview()">Post</button>
@@ -215,15 +243,13 @@
         </div>
     </div>
 
-    <!-- OPTIONS MODAL (NEW) -->
+    <!-- OPTIONS MODAL -->
     <div id="options-modal" class="modal-overlay">
         <div class="auth-box">
             <h2 style="margin-top:0; color:#00A173;">Manage App</h2>
             <p style="color:#ccc; font-size:13px; margin-bottom:20px;">You already own this item.</p>
-            
             <button class="btn-auth" style="background:#2f5346; color:#a8dbce; margin-bottom:10px;" onclick="window.startDownload()">Download (No Payment)</button>
             <button class="btn-auth" style="background:#ff4757; color:white;" onclick="window.returnPayment()">Return Payment</button>
-            
             <button onclick="document.getElementById('options-modal').style.display='none'" style="background:none; border:none; color:#aaa; margin-top:15px;">Cancel</button>
         </div>
     </div>
@@ -236,9 +262,7 @@
             <input id="auth-email" type="email" class="auth-input" placeholder="Email">
             <input id="auth-pass" type="password" class="auth-input" placeholder="Password">
             <button class="btn-auth" id="auth-action-btn" onclick="window.handleAuth()">Sign In</button>
-            <p class="toggle-link" onclick="window.toggleAuthMode()">
-                <span id="auth-toggle-text">Create account</span>
-            </p>
+            <p class="toggle-link" onclick="window.toggleAuthMode()"><span id="auth-toggle-text">Create account</span></p>
             <button onclick="document.getElementById('auth-modal').style.display='none'" style="background:none; border:none; color:#aaa; margin-top:10px;">Cancel</button>
         </div>
     </div>
@@ -277,6 +301,7 @@
         let activeGame = null;
         let isSignupMode = false;
         let editReviewId = null;
+        let currentRating = 5; // Default 5 stars
 
         // AUTH & PURCHASES
         onAuthStateChanged(auth, u => {
@@ -288,34 +313,27 @@
             const authActions = document.getElementById('auth-actions');
 
             if(u) {
-                // LOGGED IN
                 btn.style.background = "#00A173";
                 btn.innerHTML = `<img src="${u.photoURL || 'https://via.placeholder.com/50'}" onerror="this.src='https://via.placeholder.com/50'">`;
-                
                 document.getElementById('p-img').src = u.photoURL || 'https://via.placeholder.com/150';
                 document.getElementById('p-name').innerText = u.displayName || 'User';
                 document.getElementById('p-email').innerText = u.email;
                 profileActions.style.display = 'block';
                 authActions.style.display = 'none';
-
                 reviewBox.style.display = "block";
                 reviewPrompt.style.display = "none";
                 loadPurchases(u.uid);
             } else {
-                // LOGGED OUT
                 btn.style.background = "purple";
                 btn.innerHTML = '<i class="fas fa-user"></i>';
-                
                 document.getElementById('p-img').src = 'https://via.placeholder.com/150';
                 document.getElementById('p-name').innerText = 'Guest User';
                 document.getElementById('p-email').innerText = 'Not Logged In';
                 profileActions.style.display = 'none';
                 authActions.style.display = 'block';
-
                 userPurchases = {};
                 reviewBox.style.display = "none";
                 reviewPrompt.style.display = "block";
-                
                 if(activeGame) updateInstallButton(activeGame);
             }
         });
@@ -333,14 +351,6 @@
             if (data) {
                 allData = Object.entries(data).map(([k, v]) => ({...v, id: k})).reverse();
                 renderApps(allData);
-                // REFRESH IF OPEN
-                if(activeGame && document.getElementById('app-detail-view').classList.contains('active')) {
-                     const updatedGame = allData.find(g => g.id === activeGame.id);
-                     if(updatedGame) {
-                         activeGame = updatedGame;
-                         renderReviews(updatedGame.reviews); // Auto refresh comments
-                     }
-                }
             }
         });
 
@@ -367,15 +377,13 @@
             document.getElementById('d-size').innerText = game.size || "Varies";
             document.getElementById('d-age').innerText = game.age || "3+";
             document.getElementById('d-downloads').innerText = (game.downloadCount || "0") + "+";
-
-            const gal = document.getElementById('d-gallery');
-            gal.innerHTML = "";
+            const gal = document.getElementById('d-gallery'); gal.innerHTML = "";
             let shots = game.screenshots || [];
             if(!Array.isArray(shots)) { shots = []; if(game.sc1) shots.push(game.sc1); }
             shots.forEach(s => { gal.innerHTML += `<img src="${s}" class="sc-img">`; });
-
             updateInstallButton(game);
             renderReviews(game.reviews);
+            window.setRating(5); // Default to 5
             document.getElementById('app-detail-view').classList.add('active');
         };
 
@@ -383,11 +391,9 @@
             const btn = document.getElementById('btn-install');
             const isPaid = game.priceType === 'Paid';
             const isOwned = userPurchases[game.id];
-
             btn.classList.remove('downloading', 'btn-buy');
             btn.style.background = "var(--primary)";
             document.getElementById('progress-wrap').style.display = 'none';
-
             if (isPaid && !isOwned) {
                 btn.innerText = `Buy for ${game.price}`;
                 btn.classList.add('btn-buy'); 
@@ -401,34 +407,26 @@
 
         // INSTALL / PAYMENT
         window.handleInstallClick = () => {
-            if(!currentUser) { isSignupMode=false; updateAuthUI(); return document.getElementById('auth-modal').style.display='flex'; }
-            
             const isPaid = activeGame.priceType === 'Paid';
             const isOwned = userPurchases[activeGame.id];
-
+            if(!isPaid) { window.startDownload(); return; }
+            if(!currentUser) { isSignupMode=false; updateAuthUI(); return document.getElementById('auth-modal').style.display='flex'; }
             if (isPaid && !isOwned) {
                 document.getElementById('pay-amount').innerText = activeGame.price;
                 document.getElementById('pay-modal').style.display = 'flex';
             } else {
-                // If Free OR Owned -> Direct logic
-                // NEW: If Owned (Paid), show options
-                if (isPaid && isOwned) {
-                    document.getElementById('options-modal').style.display = 'flex';
-                } else {
-                    window.startDownload(); // Free App logic
-                }
+                document.getElementById('options-modal').style.display = 'flex';
             }
         };
-        
-        // Return Payment
+
         window.returnPayment = () => {
-            if(confirm("Are you sure? You will lose access to this app and get a refund.")) {
+            if(confirm("Are you sure? You will lose access to this app.")) {
                 remove(ref(db, `users/${currentUser.uid}/purchases/${activeGame.id}`))
                 .then(() => {
                     delete userPurchases[activeGame.id];
                     updateInstallButton(activeGame);
                     document.getElementById('options-modal').style.display = 'none';
-                    alert("Payment Returned (App Removed)");
+                    alert("Payment Returned");
                 });
             }
         };
@@ -459,15 +457,12 @@
             document.getElementById('options-modal').style.display = 'none';
             const link = activeGame.download;
             if(link) window.open(link, '_blank'); 
-
             const btn = document.getElementById('btn-install');
             const bar = document.getElementById('progress-bar');
             const wrap = document.getElementById('progress-wrap');
-
             btn.innerText = "Downloading...";
             btn.classList.add('downloading');
             wrap.style.display = 'block';
-            
             let w = 0;
             const int = setInterval(() => {
                 w += 15;
@@ -484,7 +479,26 @@
             }, 300);
         };
 
-        // REVIEWS & AUTH (FIXED FUNCTION NAME)
+        // --- NEW: STAR RATING LOGIC ---
+        window.setRating = (n) => {
+            currentRating = n;
+            const stars = document.querySelectorAll('.rate-star');
+            stars.forEach((s, i) => {
+                if(i < n) s.classList.add('filled');
+                else s.classList.remove('filled');
+            });
+        };
+
+        function getStarString(rating) {
+            let str = "";
+            for(let i=0; i<5; i++) {
+                if(i < rating) str += '<i class="fas fa-star" style="color:#fbbf24;"></i>';
+                else str += '<i class="far fa-star" style="color:#555;"></i>';
+            }
+            return str;
+        }
+
+        // REVIEWS & AUTH
         function renderReviews(reviews) {
             const list = document.getElementById('reviews-list');
             list.innerHTML = "";
@@ -494,29 +508,57 @@
                 const safeText = r.text.replace(/'/g, "\\'").replace(/"/g, "&quot;");
                 let menu = "";
                 if(isMine) {
-                    menu = `<div style="margin-left:auto;"><i class="fas fa-edit r-menu-btn" style="color:#aaa; cursor:pointer; margin-right:10px;" onclick="window.editReview('${key}', '${safeText}')"></i><i class="fas fa-trash r-menu-btn" style="color:#ff4757; cursor:pointer;" onclick="window.deleteReview('${key}')"></i></div>`;
+                    menu = `<div style="margin-left:auto;"><i class="fas fa-edit r-menu-btn" style="color:#aaa; cursor:pointer; margin-right:10px;" onclick="window.editReview('${key}', '${safeText}', ${r.rating || 5})"></i><i class="fas fa-trash r-menu-btn" style="color:#ff4757; cursor:pointer;" onclick="window.deleteReview('${key}')"></i></div>`;
                 }
                 const photo = r.photoURL ? `<img src="${r.photoURL}">` : r.name.charAt(0).toUpperCase();
-                list.innerHTML += `<div class="review-card"><div class="r-header"><div class="r-user"><div class="r-avatar">${photo}</div><div><div style="font-weight:700; font-size:14px; color:white;">${r.name}</div><div style="font-size:11px; color:#666;">${new Date(r.date).toLocaleDateString()}</div></div></div>${menu}</div><div class="r-text">${r.text}</div></div>`;
+                const stars = getStarString(r.rating || 5);
+                
+                list.innerHTML += `<div class="review-card">
+                    <div class="r-header">
+                        <div class="r-user">
+                            <div class="r-avatar">${photo}</div>
+                            <div>
+                                <div style="font-weight:700; font-size:14px; color:white;">${r.name}</div>
+                                <div style="font-size:11px; color:#666;">${new Date(r.date).toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                        ${menu}
+                    </div>
+                    <div class="r-rating-display">${stars}</div>
+                    <div class="r-body">${r.text}</div>
+                </div>`;
             });
         }
-        
-        // RENAMED postReview -> submitReview to match HTML
         window.submitReview = () => {
             if(!currentUser) return alert("Please Login first!");
             const txt = document.getElementById('review-text').value; if(!txt) return;
-            const reviewData = { name: currentUser.displayName || "User", uid: currentUser.uid, text: txt, date: Date.now(), photoURL: currentUser.photoURL || null };
-            
-            if(editReviewId) {
-                update(ref(db, `games/${activeGame.id}/reviews/${editReviewId}`), reviewData).then(() => window.cancelEditReview());
-            } else {
-                push(ref(db, `games/${activeGame.id}/reviews`), reviewData).then(() => document.getElementById('review-text').value = "");
-            }
+            const reviewData = { 
+                name: currentUser.displayName || "User", 
+                uid: currentUser.uid, 
+                text: txt, 
+                date: Date.now(), 
+                photoURL: currentUser.photoURL || null,
+                rating: currentRating // Save Rating
+            };
+            if(editReviewId) update(ref(db, `games/${activeGame.id}/reviews/${editReviewId}`), reviewData).then(() => window.cancelEditReview());
+            else push(ref(db, `games/${activeGame.id}/reviews`), reviewData).then(() => document.getElementById('review-text').value = "");
         };
-
         window.deleteReview = (k) => { if(confirm("Delete?")) remove(ref(db, `games/${activeGame.id}/reviews/${k}`)); };
-        window.editReview = (k, txt) => { editReviewId = k; document.getElementById('review-text').value = txt; document.getElementById('r-post-btn').innerText = "Update"; document.getElementById('r-cancel-btn').style.display = "inline-block"; };
-        window.cancelEditReview = () => { editReviewId = null; document.getElementById('review-text').value = ""; document.getElementById('r-post-btn').innerText = "Post"; document.getElementById('r-cancel-btn').style.display = "none"; };
+        
+        window.editReview = (k, txt, rating) => { 
+            editReviewId = k; 
+            document.getElementById('review-text').value = txt; 
+            window.setRating(rating); // Set stars
+            document.getElementById('r-post-btn').innerText = "Update"; 
+            document.getElementById('r-cancel-btn').style.display = "inline-block"; 
+        };
+        window.cancelEditReview = () => { 
+            editReviewId = null; 
+            document.getElementById('review-text').value = ""; 
+            window.setRating(5); // Reset stars
+            document.getElementById('r-post-btn').innerText = "Post"; 
+            document.getElementById('r-cancel-btn').style.display = "none"; 
+        };
 
         window.checkProfile = () => window.switchTab('profile', document.querySelectorAll('.nav-item')[3]);
         window.toggleAuthMode = () => { isSignupMode = !isSignupMode; updateAuthUI(); };
